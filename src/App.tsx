@@ -161,7 +161,7 @@ function App() {
         <section className="masthead" id="atlas">
           <div className="masthead-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> Cryptography / research index</div>
-            <h1>CPF: The Open Problems in Cryptography</h1>
+            <h1>Crypto<wbr />Frontier<wbr />Atlas: Open Problems in Cryptography</h1>
             <p className="masthead-lede">A source-aware atlas of open questions, formal statements, and public evidence in cryptography. The current release covers symmetric cryptography.</p>
           </div>
           <div className="signal-panel" aria-label="Dataset snapshot">
