@@ -1,0 +1,45 @@
+{
+  "schema_version": "0.2.0",
+  "id": "balanced-eight-variable-nonlinearity",
+  "group_id": "balanced-eight-variable-nonlinearity",
+  "title": "Maximum balanced nonlinearity in eight variables",
+  "summary": "Determine the largest nonlinearity of a balanced Boolean function on eight variables, including whether the spectral upper target 118 can be attained.",
+  "formal_statement": {
+    "format": "markdown-latex",
+    "body": "For $f:\\mathbb F_2^8\\to\\mathbb F_2$ with $|f^{-1}(1)|=128$, determine $\\max \\operatorname{NL}(f)$. In particular, decide whether a balanced function with $\\operatorname{NL}(f)=118$ exists."
+  },
+  "scope": {
+    "domain": "Balanced Boolean functions and Walsh spectra",
+    "assumptions": ["The function is balanced", "Nonlinearity is distance from the first-order Reed--Muller code"],
+    "parameters": ["Input dimension n = 8", "Balanced support size 128"],
+    "unresolved_remainder": "Any claim beyond the eight-variable balanced case is outside this record."
+  },
+  "classification": {
+    "taxonomy_version": "0.2.0",
+    "primary": "foundations.boolean-vectorial",
+    "secondary": ["foundations.coding-theory"],
+    "tags": ["boolean-functions", "nonlinearity", "walsh-spectrum", "computer-assisted"]
+  },
+  "source": {
+    "kind": "explicit_open_problem",
+    "citations": [
+      {"role": "original_source", "label": "Maity--Maitra balanced resilient-function bounds", "locator": "FSE 2004"},
+      {"role": "prior_progress", "label": "Picek et al. balanced Boolean-function search targets", "locator": "PPSN 2014"}
+    ]
+  },
+  "status": {
+    "public_mathematical_status": "open",
+    "public_verification_status": "none",
+    "peer_review_status": "not_submitted",
+    "disclosure": "solution_withheld",
+    "last_reviewed": "2026-08-16"
+  },
+  "progress": [
+    {"date": "2004-01-01", "kind": "prior_result", "summary": "Earlier balanced-function constructions and bounds left the eight-variable target as a finite extremal question.", "citation_labels": ["Maity--Maitra balanced resilient-function bounds"]},
+    {"date": "2014-01-01", "kind": "source_statement", "summary": "A balanced eight-variable search target was recorded in the subsequent computational literature.", "citation_labels": ["Picek et al. balanced Boolean-function search targets"]},
+    {"date": "2026-08-17", "kind": "this_work", "summary": "Progress on this problem is reported in work currently under anonymous review; details and attribution are withheld during review.", "citation_labels": []}
+  ],
+  "artifacts": [],
+  "lean": {"status": "none", "available_in_repo": false},
+  "relations": {"related": ["vectorial-nonlinearity-beyond-nyberg"], "supersedes": [], "superseded_by": []}
+}

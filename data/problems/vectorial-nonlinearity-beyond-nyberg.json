@@ -1,0 +1,46 @@
+{
+  "schema_version": "0.2.0",
+  "id": "vectorial-nonlinearity-beyond-nyberg",
+  "group_id": "vectorial-nonlinearity",
+  "title": "Vectorial Boolean nonlinearity beyond the Nyberg threshold",
+  "summary": "Determine the maximum component nonlinearity of maps from F2^n to F2^m when the output dimension exceeds the bent-function threshold.",
+  "formal_statement": {
+    "format": "markdown-latex",
+    "body": "For $n=2k$ and $k<m<n$, determine $\\mathcal N(n,m)=\\max_{F:\\mathbb F_2^n\\to\\mathbb F_2^m}\\min_{0\\ne v\\in\\mathbb F_2^m}\\operatorname{NL}(v\\cdot F)$, where $\\operatorname{NL}(h)=2^{n-1}-\\tfrac12\\max_a|W_h(a)|$ and $W_h$ is the Walsh transform."
+  },
+  "scope": {
+    "domain": "Vectorial Boolean functions and component nonlinearity",
+    "assumptions": ["n = 2k >= 6", "k < m < 2k", "Nonlinearity is component nonlinearity"],
+    "parameters": ["n: input dimension", "m: output dimension"],
+    "unresolved_remainder": "Tightness of the general upper bound for all admissible (n,m) remains outside the public record."
+  },
+  "classification": {
+    "taxonomy_version": "0.2.0",
+    "primary": "foundations.boolean-vectorial",
+    "secondary": ["foundations.coding-theory"],
+    "tags": ["vectorial-functions", "nonlinearity", "bent-functions", "covering-radius"]
+  },
+  "source": {
+    "kind": "explicit_open_problem",
+    "citations": [
+      {"role": "original_source", "label": "Wadayama et al., vectorial Boolean nonlinearity", "locator": "Coding-theoretic formulation"},
+      {"role": "prior_progress", "label": "Nyberg, perfect nonlinear functions", "locator": "Bent-component threshold"},
+      {"role": "prior_progress", "label": "Xu--Carlet--Mesnager--Wu, upper bounds in the range m > n/2", "locator": "Selected parameter regimes"}
+    ]
+  },
+  "status": {
+    "public_mathematical_status": "partial_progress",
+    "public_verification_status": "none",
+    "peer_review_status": "not_submitted",
+    "disclosure": "solution_withheld",
+    "last_reviewed": "2026-08-16"
+  },
+  "progress": [
+    {"date": "1991-01-01", "kind": "prior_result", "summary": "Nyberg's threshold rules out vectorial bentness once the output dimension exceeds the half-dimension threshold.", "citation_labels": ["Nyberg, perfect nonlinear functions"]},
+    {"date": "2001-01-01", "kind": "source_statement", "summary": "Coding-theoretic work formulates the optimization problem and records non-tight general bounds.", "citation_labels": ["Wadayama et al., vectorial Boolean nonlinearity"]},
+    {"date": "2026-08-17", "kind": "this_work", "summary": "Progress on this problem is reported in work currently under anonymous review; details and attribution are withheld during review.", "citation_labels": []}
+  ],
+  "artifacts": [],
+  "lean": {"status": "none", "available_in_repo": false},
+  "relations": {"related": ["balanced-eight-variable-nonlinearity"], "supersedes": [], "superseded_by": []}
+}

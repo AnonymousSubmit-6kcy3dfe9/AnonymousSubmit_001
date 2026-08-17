@@ -1,0 +1,47 @@
+{
+  "schema_version": "0.2.0",
+  "id": "tu-deng-conjecture",
+  "group_id": "tu-deng-conjecture",
+  "title": "The Tu--Deng circular-addition inequality",
+  "summary": "Bound the number of low-weight pairs representing a nonzero residue modulo 2^k - 1, and characterize when the half-cube bound is attained.",
+  "formal_statement": {
+    "format": "markdown-latex",
+    "body": "Let $M=2^k-1$ and $1\\le t<M$. Define $S(t,k)=\\{(a,b)\\in\\{0,\\ldots,M-1\\}^2:a+b\\equiv t\\pmod M,\\operatorname{wt}_k(a)+\\operatorname{wt}_k(b)<k\\}$. Prove or refute $|S(t,k)|\\le2^{k-1}$ for every $k\\ge2$ and admissible $t$."
+  },
+  "scope": {
+    "domain": "Circular addition, Boolean weights, and algebraic immunity",
+    "assumptions": ["k >= 2", "1 <= t < 2^k - 1", "Hamming weights use k-bit representatives"],
+    "parameters": ["k: word length", "t: nonzero residue"],
+    "unresolved_remainder": "Priority and independence of competing complete-proof claims require an explicit literature audit."
+  },
+  "classification": {
+    "taxonomy_version": "0.2.0",
+    "primary": "foundations.combinatorics-finite-geometry",
+    "secondary": ["foundations.boolean-vectorial"],
+    "tags": ["algebraic-immunity", "cyclic-addition", "hamming-weight"]
+  },
+  "source": {
+    "kind": "explicit_conjecture",
+    "citations": [
+      {"role": "original_source", "label": "Tu--Deng, On a conjecture about binary strings distribution", "doi": "10.1007/s10623-010-9413-9"},
+      {"role": "prior_progress", "label": "Spiegelhofer--Wallner, circular-addition formulation", "doi": "10.37236/7178"},
+      {"role": "independent_resolution", "label": "Liu--Luo--Xie, A complete proof for the Tu--Deng conjecture", "eprint": "arXiv:2608.05187", "url": "https://arxiv.org/abs/2608.05187"}
+    ]
+  },
+  "status": {
+    "public_mathematical_status": "partial_progress",
+    "public_verification_status": "externally_claimed",
+    "peer_review_status": "preprint",
+    "disclosure": "public_progress",
+    "last_reviewed": "2026-08-16"
+  },
+  "progress": [
+    {"date": "2011-01-01", "kind": "source_statement", "summary": "Tu and Deng introduced the uniform half-cube inequality.", "citation_labels": ["Tu--Deng, On a conjecture about binary strings distribution"]},
+    {"date": "2019-01-01", "kind": "prior_result", "summary": "An exact circular-addition formulation and almost-sure asymptotic results were published, without replacing the pointwise conjecture.", "citation_labels": ["Spiegelhofer--Wallner, circular-addition formulation"]},
+    {"date": "2026-08-01", "kind": "independent_result", "summary": "A public preprint claims a complete proof; priority and proof independence remain under review.", "citation_labels": ["Liu--Luo--Xie, A complete proof for the Tu--Deng conjecture"]},
+    {"date": "2026-08-17", "kind": "this_work", "summary": "Progress on this problem is reported in work currently under anonymous review; details and attribution are withheld during review.", "citation_labels": []}
+  ],
+  "artifacts": [],
+  "lean": {"status": "none", "available_in_repo": false},
+  "relations": {"related": ["carlet-13-7-7-layer-algebraic-immunity"], "supersedes": [], "superseded_by": []}
+}

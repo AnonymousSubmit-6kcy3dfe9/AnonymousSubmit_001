@@ -1,0 +1,26 @@
+{
+  "dataset_version": "0.2.0",
+  "taxonomy_version": "0.2.0",
+  "language": "en",
+  "disclosure_policy": "problem_statements_and_public_progress_only",
+  "record_count": 13,
+  "records": [
+    "balanced-eight-variable-nonlinearity",
+    "bogdanov-dcufn-dplus1-active-sboxes",
+    "carlet-13-3-14-affine-derivatives",
+    "carlet-13-7-7-layer-algebraic-immunity",
+    "carlet-stability-op1",
+    "carlet-stability-op2",
+    "derbez-euler-expanded-equivalence",
+    "derbez-gfn-38-40-branch-diffusion",
+    "kaleyski-conjecture21-second-identity",
+    "koelsch-f4-direct-xor",
+    "tezcan-ozbudak-differential-factor",
+    "tu-deng-conjecture",
+    "vectorial-nonlinearity-beyond-nyberg"
+  ],
+  "excluded_source_families": [
+    {"label": "Carlet 13.2(3) quadratic/RM formulas", "reason": "historically settled classical rederivation"},
+    {"label": "BCT maximal-table rigidity", "reason": "derived theorem-level slice, not a literature-stated open question"}
+  ]
+}
