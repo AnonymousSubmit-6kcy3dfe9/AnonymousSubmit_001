@@ -16,6 +16,29 @@ import taxonomy from '../data/taxonomy.json';
 
 export type ProblemStatus = 'open' | 'partial_progress' | 'resolved' | 'refuted' | 'corrected' | 'historically_settled';
 
+export type SourceKind = 'explicit_open_problem' | 'explicit_conjecture' | 'open_challenge' | 'public_thesis_conjecture';
+export type PublicVerificationStatus = 'none' | 'computer_checked' | 'externally_claimed' | 'externally_reproducible' | 'repository_checked';
+export type PeerReviewStatus = 'not_submitted' | 'preprint' | 'under_review' | 'published' | 'independently_audited';
+export type ArtifactRole = 'canonical_manuscript' | 'source_code' | 'verifier' | 'data' | 'superseded_draft';
+export type ArtifactVisibility = 'not_listed' | 'external_link' | 'repository_file';
+
+export interface Citation {
+  role: 'original_source' | 'prior_progress' | 'resolution' | 'independent_resolution';
+  label: string;
+  locator?: string;
+  doi?: string;
+  eprint?: string;
+  url?: string;
+}
+
+export interface Artifact {
+  role: ArtifactRole;
+  visibility: ArtifactVisibility;
+  url?: string;
+  sha256?: string;
+  license?: string;
+}
+
 export interface Problem {
   schema_version: string;
   id: string;
@@ -26,19 +49,30 @@ export interface Problem {
   scope: { domain: string; assumptions: string[]; parameters: string[]; unresolved_remainder: string };
   classification: { taxonomy_version: string; primary: string; secondary: string[]; tags: string[] };
   source: {
-    kind: string;
-    citations: Array<{ role: string; label: string; locator?: string; doi?: string; eprint?: string; url?: string }>;
+    kind: SourceKind;
+    citations: Citation[];
   };
   status: {
     public_mathematical_status: ProblemStatus;
-    public_verification_status: string;
-    peer_review_status: string;
+    public_verification_status: PublicVerificationStatus;
+    peer_review_status: PeerReviewStatus;
     disclosure: string;
     last_reviewed: string;
   };
   progress: Array<{ date: string; kind: string; summary: string; citation_labels: string[] }>;
-  artifacts: Array<Record<string, unknown>>;
-  lean: { status: string; available_in_repo: boolean; path?: string; commit?: string };
+  artifacts: Artifact[];
+  lean: {
+    status: string;
+    available_in_repo: boolean;
+    path?: string;
+    commit?: string;
+    lean_version?: string;
+    mathlib_version?: string;
+    trusted_base?: string;
+    replay_command?: string;
+    source_tree_sha256?: string;
+    source_tree_file_count?: number;
+  };
   relations: { related: string[]; supersedes: string[]; superseded_by: string[] };
 }
 

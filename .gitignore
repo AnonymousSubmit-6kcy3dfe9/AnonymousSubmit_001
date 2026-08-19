@@ -5,3 +5,6 @@ dist/
 *.log
 *.tsbuildinfo
 vite.config.js
+/.agents/skills/ingest-tit-open-questions/
+/papers/
+/data/lean/.lake

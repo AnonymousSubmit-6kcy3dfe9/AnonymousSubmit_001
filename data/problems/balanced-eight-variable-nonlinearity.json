@@ -3,10 +3,10 @@
   "id": "balanced-eight-variable-nonlinearity",
   "group_id": "balanced-eight-variable-nonlinearity",
   "title": "Maximum balanced nonlinearity in eight variables",
-  "summary": "Determine the largest nonlinearity of a balanced Boolean function on eight variables, including whether the spectral upper target 118 can be attained.",
+  "summary": "The maximum nonlinearity of a balanced Boolean function on eight variables is 116; in particular, the spectral target 118 is impossible.",
   "formal_statement": {
     "format": "markdown-latex",
-    "body": "For $f:\\mathbb F_2^8\\to\\mathbb F_2$ with $|f^{-1}(1)|=128$, determine $\\max \\operatorname{NL}(f)$. In particular, decide whether a balanced function with $\\operatorname{NL}(f)=118$ exists."
+    "body": "For every $f:\\mathbb F_2^8\\to\\mathbb F_2$ with $|f^{-1}(1)|=128$, prove $\\operatorname{NL}(f)\\le 116$, and construct a balanced function for which equality holds."
   },
   "scope": {
     "domain": "Balanced Boolean functions and Walsh spectra",
@@ -28,18 +28,38 @@
     ]
   },
   "status": {
-    "public_mathematical_status": "open",
-    "public_verification_status": "none",
-    "peer_review_status": "not_submitted",
-    "disclosure": "solution_withheld",
-    "last_reviewed": "2026-08-16"
+    "public_mathematical_status": "resolved",
+    "public_verification_status": "repository_checked",
+    "peer_review_status": "under_review",
+    "disclosure": "public_progress",
+    "last_reviewed": "2026-08-19"
   },
   "progress": [
     {"date": "2004-01-01", "kind": "prior_result", "summary": "Earlier balanced-function constructions and bounds left the eight-variable target as a finite extremal question.", "citation_labels": ["Maity--Maitra balanced resilient-function bounds"]},
     {"date": "2014-01-01", "kind": "source_statement", "summary": "A balanced eight-variable search target was recorded in the subsequent computational literature.", "citation_labels": ["Picek et al. balanced Boolean-function search targets"]},
-    {"date": "2026-08-17", "kind": "this_work", "summary": "Progress on this problem is reported in work currently under anonymous review; details and attribution are withheld during review.", "citation_labels": []}
+    {"date": "2026-08-17", "kind": "this_work", "summary": "A complete resolution is reported in work under anonymous review; manuscript attribution remains withheld.", "citation_labels": []},
+    {"date": "2026-08-19", "kind": "machine_checked_formalization", "summary": "Lean proves the sharp maximum 116 through complete local enumeration, 69 integer Farkas certificate replays, 13 terminal profile exclusions, and an explicit equality witness.", "citation_labels": []}
   ],
-  "artifacts": [],
-  "lean": {"status": "none", "available_in_repo": false},
+  "artifacts": [
+    {
+      "role": "source_code",
+      "visibility": "repository_file",
+      "url": "https://github.com/AnonymousSubmit-6kcy3dfe9/AnonymousSubmit_001/blob/main/data/lean/CryptoFrontierAtlas/BalancedEightNonlinearityComplete.lean",
+      "sha256": "2f60cd09e62e6bd75e2d454db2736e83411a1584f92f0a759bb147f0b36b80ad",
+      "license": "Apache-2.0"
+    }
+  ],
+  "lean": {
+    "status": "complete",
+    "available_in_repo": true,
+    "path": "data/lean/CryptoFrontierAtlas/BalancedEightNonlinearityComplete.lean",
+    "commit": "main",
+    "lean_version": "4.29.1",
+    "mathlib_version": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+    "trusted_base": "Lean 4.29.1, mathlib, and the native_decide compiled evaluator for fixed finite enumeration, certificate, parity, normalization, and witness checks; no user-declared axioms",
+    "replay_command": "cd data/lean && lake env lean CryptoFrontierAtlas/BalancedEightNonlinearityComplete.lean",
+    "source_tree_sha256": "08c57501a25e9267ac3ef014987516728bf6f17998d70a74dae471388e7f7624",
+    "source_tree_file_count": 61
+  },
   "relations": {"related": ["vectorial-nonlinearity-beyond-nyberg"], "supersedes": [], "superseded_by": []}
 }

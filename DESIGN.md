@@ -8,13 +8,11 @@ cryptography. Each record describes a traceable problem statement, its formal
 scope, public literature, and the publicly auditable evidence available for
 its current status.
 
-The first release is an index and presentation layer. It is **not** a
-repository for private proofs, unpublished answers, or an assertion that every
-manuscript in the source directory has been independently reviewed.
-
-The release will therefore expose problem statements and public literature
-progress only. Internal solutions remain outside the public data tree until
-they are explicitly cleared for release.
+The first release is an index and presentation layer with three explicitly
+cleared, scoped Lean formalizations. It is **not** a repository for private
+proofs, uncleared answers, or an assertion that every manuscript in the source
+directory has been independently reviewed. Other internal solutions remain
+outside the public data tree until they are cleared for release.
 
 ## 2. Corpus boundary
 
@@ -27,7 +25,7 @@ one canonical record and a source-version relation.
 
 | Source family | Atomic records | Decision | Rationale |
 | --- | ---: | --- | --- |
-| Balanced 8-variable nonlinearity | 1 | Include | Public search target with a traceable literature origin. Current local result is withheld. |
+| Balanced 8-variable nonlinearity | 1 | Include | Public search target with a traceable literature origin. The sharp maximum 116, including the complete bridge and witness, has a repository-checked Lean formalization. |
 | Carlet 13.2(3) quadratic/RM formulas | 1 | Exclude | The formulas are classical (Sloane--Berlekamp and MacWilliams); the local manuscript is a rederivation, not a current open frontier. |
 | Carlet 13.3(14) affine derivatives of bent functions | 1 | Include | Explicit public book problem. |
 | Carlet 13.7(7) Hamming-layer algebraic immunity | 1 | Include | Explicit public book problem; current result is only first-order/asymptotic progress. |
@@ -49,16 +47,19 @@ claim that the first release contains 24 records.
 
 ## 3. Public disclosure policy
 
-Every record has an explicit disclosure field. The first release uses
-`problem_only` or `public_progress` and never embeds local theorem statements,
-private proof text, unpublished witnesses, private PDFs, or local absolute
-paths. A record may state that an internal resolution is withheld, but it must
-not reveal the withheld conclusion through a headline, badge, filename, or
-Lean path.
+Every record has an explicit disclosure field. The release may link a
+reviewed, scoped artifact when its exact verification boundary is stated in
+the source and metadata. It never embeds private proof text, private PDFs, or
+local absolute paths. A record may state that a complete internal resolution
+is withheld while exposing a partial, independently replayable artifact; the
+artifact must not be presented as a complete proof.
 
 Public artifacts must have a stable URL, a license, and a reproducible commit
 or checksum. A manuscript may be listed as a source without being copied into
-the repository.
+the repository. Repository Lean artifacts use a relative `data/lean` path,
+record their toolchain and replay command, and bind both the public wrapper
+and the complete Lean source tree to an immutable Git commit and SHA-256
+digest.
 
 `this_work` is the sole exception to the ordinary citation requirement for a
 progress event. It indicates that an anonymous manuscript reports progress on
@@ -80,6 +81,13 @@ Status dimensions are intentionally independent:
 - `peer_review_status`: `not_submitted`, `preprint`, `under_review`,
   `published`, or `independently_audited`.
 - `disclosure`: `problem_only`, `public_progress`, or `solution_withheld`.
+
+`lean.status: partial` means that the repository file proves only the named
+intermediate lemmas, finite certificates, or witness properties. It does not
+upgrade `public_mathematical_status` to resolved. `lean.status: complete`
+records a complete formalization of the scoped theorem, while
+`public_verification_status: repository_checked` records that its public source
+replays in the pinned repository toolchain.
 
 For example, the permutation reading of the Tezcan--Ozbudak statement can be
 described as public progress while the unrestricted reading is refuted. The
@@ -140,6 +148,7 @@ data/
   schema/problem.schema.json
   taxonomy.json
   README.md
+  lean/                     # independently replayable Lean project
 src/                        # static frontend (Vite + React + TypeScript)
 public/                     # favicon, generated search index, static assets
 docs/                       # contributor and release documentation
@@ -164,7 +173,8 @@ The first screen is the searchable atlas, not a marketing landing page.
   limits, artifacts, and related questions.
 - **Evidence panel:** distinguishes mathematical status, computation,
   external Lean claims, and repository-checked artifacts. Empty Lean data is
-  rendered as unavailable, never as a broken code viewer.
+  rendered as unavailable, never as a broken code viewer; scoped source links
+  are rendered as public artifacts.
 - **Taxonomy view:** shows counts generated from JSON, with the distinction
   between primary counts and multi-label tag counts.
 
@@ -207,6 +217,5 @@ manuscript must be audited manually.
    contribution policy.
 3. Build the static atlas and detail pages from JSON.
 4. Run a source audit and a second-person metadata review.
-5. Publish the first GitHub Pages release. Add cleared public proofs only in a
-   later version, with independent artifact checksums and explicit release
-   notes.
+5. Publish the GitHub Pages release with cleared public proofs, independent
+   artifact checksums, explicit trust boundaries, and release notes.

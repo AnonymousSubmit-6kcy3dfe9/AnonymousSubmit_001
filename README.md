@@ -7,16 +7,19 @@ release populates symmetric cryptography only. It indexes formal problem
 statements, public literature progress, scope boundaries, and evidence status
 in a static site designed for GitHub Pages.
 
-The first release contains 13 English problem records. It does not publish
-private solutions, uncleared manuscripts, or Lean source code. A claim that a
-proof exists is kept separate from whether the proof artifact is publicly
-available or reproducible.
+The public release contains 13 English problem records and three explicitly
+cleared, scoped Lean applications under data/lean. They completely formalize
+the uniform Tu--Deng inequality, the stated vectorial-nonlinearity bound beyond
+the Nyberg threshold, and the sharp balanced eight-variable maximum of 116.
+Other private solutions and uncleared manuscripts remain out of the repository.
 
 The `This work` timeline marker denotes progress reported in work under
 anonymous review. Such entries intentionally contain no citation, author,
 paper identifier, or external link.
 
 ## Local development
+
+The website requires Node.js 20 or newer.
 
 ```bash
 npm install
@@ -36,12 +39,22 @@ the release manifest is [`data/manifest.json`](data/manifest.json),
 and the inclusion, disclosure, taxonomy, and release policy is documented in
 [`DESIGN.md`](DESIGN.md).
 
+The Lean artifacts can be replayed independently of the website:
+
+    cd data/lean
+    lake build CryptoFrontierAtlas
+
+The project records its Lean toolchain and mathlib lockfile. The complete
+replay and trust-boundary checks are documented in
+[`data/lean/README.md`](data/lean/README.md); finite checks that use
+`native_decide` are documented there with that evaluator's trust boundary.
+
 ## Contribution boundary
 
 New records require a public source citation, an auditable scope, status and
 disclosure fields, and license review. Do not add local absolute paths,
 private proof text, answer-bearing filenames, or Lean artifacts that have not
-been explicitly cleared for publication.
+been explicitly cleared for publication and scoped in the metadata.
 
 ## License
 

@@ -10,7 +10,10 @@ import {
   CircleAlert,
   Code2,
   ExternalLink,
+  FileCheck2,
   Filter,
+  Layers3,
+  Link2,
   ListFilter,
   Search,
   ShieldCheck,
@@ -50,6 +53,43 @@ const progressLabels: Record<string, string> = {
   this_work: 'This work',
 };
 
+const sourceKindLabels: Record<Problem['source']['kind'], string> = {
+  explicit_open_problem: 'Explicit open problem',
+  explicit_conjecture: 'Explicit conjecture',
+  open_challenge: 'Open challenge',
+  public_thesis_conjecture: 'Public thesis conjecture',
+};
+
+const verificationLabels: Record<Problem['status']['public_verification_status'], string> = {
+  none: 'None',
+  computer_checked: 'Computer checked',
+  externally_claimed: 'Externally claimed',
+  externally_reproducible: 'Externally reproducible',
+  repository_checked: 'Repository checked',
+};
+
+const peerReviewLabels: Record<Problem['status']['peer_review_status'], string> = {
+  not_submitted: 'Not submitted',
+  preprint: 'Preprint',
+  under_review: 'Under review',
+  published: 'Published',
+  independently_audited: 'Independently audited',
+};
+
+const artifactRoleLabels: Record<Problem['artifacts'][number]['role'], string> = {
+  canonical_manuscript: 'Canonical manuscript',
+  source_code: 'Source code',
+  verifier: 'Verifier',
+  data: 'Data',
+  superseded_draft: 'Superseded draft',
+};
+
+const artifactVisibilityLabels: Record<Problem['artifacts'][number]['visibility'], string> = {
+  not_listed: 'Not listed',
+  external_link: 'External link',
+  repository_file: 'Repository file',
+};
+
 function hasThisWork(problem: Problem) {
   return problem.progress.some((entry) => entry.kind === 'this_work');
 }
@@ -81,6 +121,50 @@ function readHash() {
   return match?.[1] ?? null;
 }
 
+function eprintUrl(identifier: string) {
+  const arxiv = identifier.match(/^arXiv:\s*([0-9]{4}\.[0-9]{4,5}(?:v[0-9]+)?)$/i);
+  if (arxiv) return `https://arxiv.org/abs/${arxiv[1]}`;
+  const iacr = identifier.match(/^(?:(?:IACR\s+)?ePrint\s+)?([0-9]{4}\/[0-9]+)$/i);
+  if (iacr) return `https://eprint.iacr.org/${iacr[1]}`;
+  return null;
+}
+
+function readableEnum(value: string) {
+  return value.replaceAll('_', ' ');
+}
+
+function canonicalUrl(value: string) {
+  try {
+    const url = new URL(value);
+    const pathname = url.pathname === '/' ? '/' : url.pathname.replace(/\/$/, '');
+    return `${url.protocol.toLowerCase()}//${url.host.toLowerCase()}${pathname}${url.search}${url.hash}`;
+  } catch {
+    return value.replace(/\/$/, '');
+  }
+}
+
+function CitationLinks({ citation, iconSize = 12 }: { citation: Problem['source']['citations'][number]; iconSize?: number }) {
+  const eprintHref = citation.eprint ? eprintUrl(citation.eprint) : null;
+  const links = [
+    citation.doi && { href: `https://doi.org/${citation.doi}`, label: 'DOI' },
+    citation.eprint && eprintHref && { href: eprintHref, label: citation.eprint },
+    citation.url && { href: citation.url, label: 'Open link' },
+  ].filter((item): item is { href: string; label: string } => Boolean(item));
+  const seen = new Set<string>();
+  const uniqueLinks = links.filter((item) => {
+    const key = canonicalUrl(item.href);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  return (
+    <>
+      {uniqueLinks.map((item) => <a href={item.href} target="_blank" rel="noreferrer" aria-label={`${citation.label}: ${item.label}`} key={item.href}>{item.label} <ExternalLink size={iconSize} /></a>)}
+      {citation.eprint && !eprintHref && <span className="citation-identifier">{citation.eprint}</span>}
+    </>
+  );
+}
+
 function App() {
   const [query, setQuery] = useState('');
   const [area, setArea] = useState('all');
@@ -97,7 +181,10 @@ function App() {
 
   useEffect(() => {
     if (!selectedId) return;
-    window.setTimeout(() => document.querySelector('.detail-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
+    window.setTimeout(() => {
+      document.querySelector('.detail-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelector<HTMLElement>('.detail-heading h2')?.focus({ preventScroll: true });
+    }, 0);
   }, [selectedId]);
 
   const filtered = useMemo(() => {
@@ -300,12 +387,18 @@ function EmptyDetail() {
 
 function Detail({ problem, onClose }: { problem: Problem; onClose: () => void }) {
   const sourceCitation = problem.source.citations[0];
+  const relationGroups = [
+    { label: 'Related questions', ids: problem.relations.related },
+    { label: 'Supersedes', ids: problem.relations.supersedes },
+    { label: 'Superseded by', ids: problem.relations.superseded_by },
+  ].filter((group) => group.ids.length > 0);
+
   return (
     <div className="detail-inner">
       <div className="detail-topbar"><button className="back-button" onClick={onClose}><ArrowLeft size={16} /> Back to index</button><span className="detail-id">{problem.id}</span></div>
       <div className="detail-heading">
         <div className="record-topline"><span className={`status-pill ${statusTone[problem.status.public_mathematical_status]}`}><span />{statusLabels[problem.status.public_mathematical_status]}</span>{hasThisWork(problem) && <span className="work-pill">This work</span>}<ClassificationPath id={problem.classification.primary} /></div>
-        <h2>{problem.title}</h2>
+        <h2 tabIndex={-1}>{problem.title}</h2>
         <p>{problem.summary}</p>
       </div>
       <div className="detail-grid">
@@ -331,14 +424,77 @@ function Detail({ problem, onClose }: { problem: Problem; onClose: () => void })
           </section>
         </div>
         <aside className="detail-side">
-          <div className="side-block"><div className="section-kicker">Source</div><strong>{sourceCitation.label}</strong>{sourceCitation.locator && <span>{sourceCitation.locator}</span>}{sourceCitation.doi && <a href={`https://doi.org/${sourceCitation.doi}`} target="_blank" rel="noreferrer">DOI <ExternalLink size={13} /></a>}{sourceCitation.url && <a href={sourceCitation.url} target="_blank" rel="noreferrer">Open source <ExternalLink size={13} /></a>}</div>
-          <div className="side-block"><div className="section-kicker">Evidence</div><div className="evidence-line"><Check size={15} /><span>Public status</span><strong>{statusLabels[problem.status.public_mathematical_status]}</strong></div><div className="evidence-line"><CircleAlert size={15} /><span>Disclosure</span><strong>{problem.status.disclosure.replaceAll('_', ' ')}</strong></div><div className="evidence-line"><Code2 size={15} /><span>Lean source</span><strong>{problem.lean.available_in_repo ? 'Available' : 'Not publicly available'}</strong></div></div>
-          <div className="side-block literature-block"><div className="section-kicker"><BookOpen size={14} /> Literature trail</div>{problem.source.citations.map((citation) => <div className="citation-entry" key={`${citation.role}-${citation.label}`}><strong>{citation.label}</strong><span>{citation.role.replaceAll('_', ' ')}{citation.locator ? ` · ${citation.locator}` : ''}</span>{citation.doi && <a href={`https://doi.org/${citation.doi}`} target="_blank" rel="noreferrer">DOI <ExternalLink size={12} /></a>}{citation.url && <a href={citation.url} target="_blank" rel="noreferrer">Open link <ExternalLink size={12} /></a>}</div>)}</div>
-          <div className="side-block"><div className="section-kicker">Topics</div><div className="tag-cloud">{problem.classification.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div></div>
-          <div className="withheld-note"><ShieldCheck size={16} /><p>Internal solutions and uncleared proof artifacts are intentionally withheld from this release.</p></div>
+          <div className="side-block source-block">
+            <div className="section-kicker">Source</div>
+            <div className="source-kind"><span>Source kind</span><strong>{sourceKindLabels[problem.source.kind] ?? readableEnum(problem.source.kind)}</strong></div>
+            <strong>{sourceCitation.label}</strong>
+            {sourceCitation.locator && <span>{sourceCitation.locator}</span>}
+            <CitationLinks citation={sourceCitation} iconSize={13} />
+          </div>
+          <div className="side-block evidence-block">
+            <div className="section-kicker">Evidence</div>
+            <div className="evidence-line"><Check size={15} /><span>Mathematical status</span><strong>{statusLabels[problem.status.public_mathematical_status]}</strong></div>
+            <div className="evidence-line"><ShieldCheck size={15} /><span>Public verification</span><strong>{verificationLabels[problem.status.public_verification_status] ?? readableEnum(problem.status.public_verification_status)}</strong></div>
+            <div className="evidence-line"><BookOpen size={15} /><span>Peer review</span><strong>{peerReviewLabels[problem.status.peer_review_status] ?? readableEnum(problem.status.peer_review_status)}</strong></div>
+            <div className="evidence-line"><CircleAlert size={15} /><span>Disclosure</span><strong>{problem.status.disclosure.replaceAll('_', ' ')}</strong></div>
+            <div className="evidence-line"><Code2 size={15} /><span>Lean status</span><strong>{readableEnum(problem.lean.status)}</strong></div>
+            <div className="evidence-line"><Code2 size={15} /><span>Lean source</span><strong>{problem.lean.available_in_repo ? 'Available' : 'Not publicly available'}</strong></div>
+          </div>
+          <div className="side-block literature-block">
+            <div className="section-kicker"><BookOpen size={14} /> Literature trail</div>
+            {problem.source.citations.map((citation) => (
+              <div className="citation-entry" key={`${citation.role}-${citation.label}`}>
+                <strong>{citation.label}</strong>
+                <span>{citation.role.replaceAll('_', ' ')}{citation.locator ? ` · ${citation.locator}` : ''}</span>
+                <CitationLinks citation={citation} />
+              </div>
+            ))}
+          </div>
+          <div className="side-block classification-block">
+            <div className="section-kicker"><Layers3 size={14} /> Classification</div>
+            <span className="metadata-label">Secondary taxonomy</span>
+            {problem.classification.secondary.length > 0
+              ? <div className="taxonomy-path-list">{problem.classification.secondary.map((id) => <ClassificationPath id={id} key={id} />)}</div>
+              : <span className="empty-metadata">No secondary assignment</span>}
+            <span className="metadata-label metadata-label-spaced">Topics</span>
+            <div className="tag-cloud">{problem.classification.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div>
+          </div>
+          <div className="side-block artifact-block">
+            <div className="section-kicker"><FileCheck2 size={14} /> Public artifacts</div>
+            {problem.artifacts.length > 0
+              ? problem.artifacts.map((artifact, index) => (
+                <div className="artifact-entry" key={`${artifact.role}-${artifact.url ?? index}`}>
+                  <div className="artifact-head"><strong>{artifactRoleLabels[artifact.role] ?? readableEnum(artifact.role)}</strong><span>{artifactVisibilityLabels[artifact.visibility] ?? readableEnum(artifact.visibility)}</span></div>
+                  {artifact.license && <span>License: {artifact.license}</span>}
+                  {artifact.sha256 && <code>SHA-256 {artifact.sha256}</code>}
+                  {artifact.url && <a href={artifact.url} target="_blank" rel="noreferrer">Open artifact <ExternalLink size={12} /></a>}
+                </div>
+              ))
+              : <span className="empty-metadata">No public artifacts listed</span>}
+          </div>
+          <div className="side-block relation-block">
+            <div className="section-kicker"><Link2 size={14} /> Question relations</div>
+            {relationGroups.length > 0
+              ? relationGroups.map((group) => (
+                <div className="relation-group" key={group.label}>
+                  <span>{group.label}</span>
+                  {group.ids.map((id) => {
+                    const target = problems.find((candidate) => candidate.id === id);
+                    return (
+                      <a className="relation-link" href={`#question/${id}`} key={id} aria-label={`Open ${target?.title ?? id}`}>
+                        <span><strong>{target?.title ?? id}</strong><small>{id}</small></span>
+                        <ArrowUpRight size={13} />
+                      </a>
+                    );
+                  })}
+                </div>
+              ))
+              : <span className="empty-metadata">No question relations listed</span>}
+          </div>
+          {!problem.lean.available_in_repo && <div className="withheld-note"><ShieldCheck size={16} /><p>Internal solutions and uncleared proof artifacts are intentionally withheld from this release.</p></div>}
         </aside>
       </div>
-      <div className="detail-footer"><span>Last reviewed {problem.status.last_reviewed}</span><span>Record group: {problem.group_id}</span><a href="https://github.com/AnonymousSubmit-6kcy3dfe9/AnonymousSubmit_001" target="_blank" rel="noreferrer">View repository <ExternalLink size={13} /></a></div>
+      <div className="detail-footer"><span className="last-reviewed">Last reviewed {problem.status.last_reviewed}</span><span className="record-group">Record group: {problem.group_id}</span><a href="https://github.com/AnonymousSubmit-6kcy3dfe9/AnonymousSubmit_001" target="_blank" rel="noreferrer">View repository <ExternalLink size={13} /></a></div>
     </div>
   );
 }
