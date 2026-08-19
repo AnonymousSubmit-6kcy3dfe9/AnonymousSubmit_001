@@ -40,6 +40,8 @@ jobs:
 
       - name: Independently check Lean environment
         working-directory: data/lean
+        env:
+          LEAN_NUM_THREADS: "1"
         run: lake env leanchecker CryptoFrontierAtlas
 
       - name: Audit admissions and theorem axioms

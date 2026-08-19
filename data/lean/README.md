@@ -35,8 +35,10 @@ The same checks used in CI are:
 The CI workflow uses `leanprover/lean-action` pinned to commit
 `38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9` (release `v1.5.0`). After the
 Lake build it runs the bundled independent checker explicitly as
-`lake env leanchecker CryptoFrontierAtlas`; the module argument is required
-because the Lake package name differs from the aggregate library target.
+`LEAN_NUM_THREADS=1 lake env leanchecker CryptoFrontierAtlas`; the module
+argument is required because the Lake package name differs from the aggregate
+library target. Serial replay keeps the checker within public-runner memory
+limits without changing the modules or declarations it rechecks.
 
 The first command lexically rejects `sorry`, `sorryAx`, `admit`, user-written
 axioms/constants, `opaque`, `unsafe`, and `partial` declarations in the project
