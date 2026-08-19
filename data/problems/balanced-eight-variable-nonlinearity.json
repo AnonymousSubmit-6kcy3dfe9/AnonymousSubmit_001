@@ -44,7 +44,7 @@
     {
       "role": "source_code",
       "visibility": "repository_file",
-      "url": "https://github.com/AnonymousSubmit-6kcy3dfe9/AnonymousSubmit_001/blob/c2f778cebf2f10b5b0401689a1a46c72207a2853/data/lean/CryptoFrontierAtlas/BalancedEightNonlinearityComplete.lean",
+      "url": "https://github.com/AnonymousSubmit-6kcy3dfe9/AnonymousSubmit_001/blob/c90b68e04cdec3356578e46fb4a8e13de878802a/data/lean/CryptoFrontierAtlas/BalancedEightNonlinearityComplete.lean",
       "sha256": "2f60cd09e62e6bd75e2d454db2736e83411a1584f92f0a759bb147f0b36b80ad",
       "license": "Apache-2.0"
     }
@@ -53,12 +53,12 @@
     "status": "complete",
     "available_in_repo": true,
     "path": "data/lean/CryptoFrontierAtlas/BalancedEightNonlinearityComplete.lean",
-    "commit": "c2f778cebf2f10b5b0401689a1a46c72207a2853",
+    "commit": "c90b68e04cdec3356578e46fb4a8e13de878802a",
     "lean_version": "4.29.1",
     "mathlib_version": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
     "trusted_base": "Lean 4.29.1, mathlib, and the native_decide compiled evaluator for fixed finite enumeration, certificate, parity, normalization, and witness checks; no user-declared axioms",
     "replay_command": "cd data/lean && lake env lean CryptoFrontierAtlas/BalancedEightNonlinearityComplete.lean",
-    "source_tree_sha256": "b0849c3605e1d3c99e862115f8a685d267321cfda7833b09092ff86c4bc871e6",
+    "source_tree_sha256": "6fa133882ac427489eb5d6d8c873937096622edc902b4dff4ce07562920c77f9",
     "source_tree_file_count": 61
   },
   "relations": {"related": ["vectorial-nonlinearity-beyond-nyberg"], "supersedes": [], "superseded_by": []}
