@@ -45,7 +45,7 @@
     {
       "role": "source_code",
       "visibility": "repository_file",
-      "url": "https://github.com/AnonymousSubmit-6kcy3dfe9/AnonymousSubmit_001/blob/main/data/lean/CryptoFrontierAtlas/VectorialNonlinearityComplete.lean",
+      "url": "https://github.com/AnonymousSubmit-6kcy3dfe9/AnonymousSubmit_001/blob/c2f778cebf2f10b5b0401689a1a46c72207a2853/data/lean/CryptoFrontierAtlas/VectorialNonlinearityComplete.lean",
       "sha256": "d86ebf6190c3d12b67703edefd22f49f1ac7028e4bfc70379344379c980b0706",
       "license": "Apache-2.0"
     }
@@ -54,12 +54,12 @@
     "status": "complete",
     "available_in_repo": true,
     "path": "data/lean/CryptoFrontierAtlas/VectorialNonlinearityComplete.lean",
-    "commit": "main",
+    "commit": "c2f778cebf2f10b5b0401689a1a46c72207a2853",
     "lean_version": "4.29.1",
     "mathlib_version": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
     "trusted_base": "Lean 4.29.1 and mathlib; the theorem uses ordinary kernel checking and no native evaluator",
     "replay_command": "cd data/lean && lake env lean CryptoFrontierAtlas/VectorialNonlinearityComplete.lean",
-    "source_tree_sha256": "08c57501a25e9267ac3ef014987516728bf6f17998d70a74dae471388e7f7624",
+    "source_tree_sha256": "b0849c3605e1d3c99e862115f8a685d267321cfda7833b09092ff86c4bc871e6",
     "source_tree_file_count": 61
   },
   "relations": {"related": ["balanced-eight-variable-nonlinearity"], "supersedes": [], "superseded_by": []}

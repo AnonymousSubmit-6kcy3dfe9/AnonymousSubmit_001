@@ -103,9 +103,7 @@ mathlib revisions, lockfile hash, and a deterministic digest of every Lean
 source file. Each public problem record binds that complete source-tree digest
 and file count to the immutable commit used by its GitHub link; `npm run
 check:data` verifies the committed tree, the checked-out tree, and the public
-wrapper digest agree. Maintainers may set `LEAN_VERIFICATION_COMMIT` to the
-new source commit only while preparing the follow-up metadata commit in the
-documented two-commit release sequence. The CI log records the provenance
-report for every checked commit.
+wrapper digest agree. The CI log records the provenance report for every
+checked commit.
 
 The Lean source is licensed under Apache-2.0 with the repository software.

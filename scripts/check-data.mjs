@@ -12,7 +12,7 @@ const files = fs.readdirSync(root).filter((file) => file.endsWith('.json')).sort
 const taxonomy = JSON.parse(fs.readFileSync('data/taxonomy.json', 'utf8'));
 const manifest = JSON.parse(fs.readFileSync('data/manifest.json', 'utf8'));
 const problemSchema = JSON.parse(fs.readFileSync('data/schema/problem.schema.json', 'utf8'));
-const ajv = new Ajv2020({ allErrors: true, strict: true });
+const ajv = new Ajv2020({ allErrors: true, strict: true, strictRequired: false });
 addFormats(ajv);
 const validateProblem = ajv.compile(problemSchema);
 const taxonomyIds = new Set(taxonomy.domains.flatMap((domain) => domain.children.map((child) => child.id)));
@@ -22,14 +22,6 @@ const records = [];
 const forbidden = ['/data_600G/', 'solved_open_questions', 'LeanCipher', 'private_solution'];
 let cachedLocalLeanSourceFiles;
 const cachedCommittedLeanSourceFiles = new Map();
-
-function verificationCommit() {
-  const override = process.env.LEAN_VERIFICATION_COMMIT;
-  if (override !== undefined && !/^[0-9a-f]{40}$/.test(override)) {
-    throw new Error('LEAN_VERIFICATION_COMMIT must be a full 40-hex Git commit SHA');
-  }
-  return override;
-}
 
 function resolveRepositoryFile(relativePath, file) {
   if (typeof relativePath !== 'string' || relativePath.length === 0) {
@@ -129,15 +121,14 @@ function verifyLeanCommit(lean, sourceArtifact, absolutePath, file) {
   if (!/^[0-9a-f]{40}$/.test(lean.commit)) {
     throw new Error(`${file} lean.commit must be a full 40-hex Git commit SHA`);
   }
-  const checkedCommit = verificationCommit() ?? lean.commit;
-  if (gitText(['cat-file', '-t', checkedCommit], file) !== 'commit') {
+  if (gitText(['cat-file', '-t', lean.commit], file) !== 'commit') {
     throw new Error(`${file} lean.commit does not name a Git commit`);
   }
   const trackedPath = gitText(['ls-files', '--error-unmatch', lean.path], file);
   if (trackedPath !== lean.path) {
     throw new Error(`${file} Lean path is not Git-tracked: ${lean.path}`);
   }
-  const committedBytes = gitBytes(['cat-file', 'blob', `${checkedCommit}:${lean.path}`], file);
+  const committedBytes = gitBytes(['cat-file', 'blob', `${lean.commit}:${lean.path}`], file);
   const committedDigest = crypto.createHash('sha256').update(committedBytes).digest('hex');
   if (sourceArtifact.sha256 !== committedDigest) {
     throw new Error(`${file} source artifact SHA-256 does not match the immutable commit`);
@@ -147,14 +138,14 @@ function verifyLeanCommit(lean, sourceArtifact, absolutePath, file) {
     throw new Error(`${file} working-tree Lean source differs from lean.commit`);
   }
   const localTree = localLeanSourceFiles();
-  const committedTree = committedLeanSourceFiles(checkedCommit, file);
+  const committedTree = committedLeanSourceFiles(lean.commit, file);
   if (localTree.length !== committedTree.length) {
     throw new Error(`${file} Lean source-tree file count differs from lean.commit`);
   }
   const localTreeHash = digestSourceTree(localTree);
   const committedTreeHash = digestSourceTree(committedTree);
   if (localTreeHash !== committedTreeHash || localTreeHash !== lean.source_tree_sha256) {
-    throw new Error(`${file} Lean source-tree SHA-256 does not match the verification commit`);
+    throw new Error(`${file} Lean source-tree SHA-256 does not match lean.commit`);
   }
   if (Number(lean.source_tree_file_count) !== localTree.length) {
     throw new Error(`${file} Lean source-tree file count is incorrect`);
