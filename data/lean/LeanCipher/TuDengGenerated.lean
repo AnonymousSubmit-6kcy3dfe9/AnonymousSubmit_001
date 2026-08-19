@@ -14,27 +14,19 @@ import LeanCipher.F2
 
 /-!
 This file contains mechanically assembled, kernel-checked lemmas used by the
-Tu--Deng proof. It has been normalized for publication so project-wide options
-appear once rather than before each generated declaration. No theorem is
-trusted merely because it was generated: every declaration is replayed by the
-Lean kernel and covered by `scripts/audit_lean_trust.py`.
+Tu--Deng proof. It has been normalized for publication and checked with Lean's
+default binder-annotation validation. No theorem is trusted merely because it
+was generated: every declaration is replayed by the Lean kernel and covered by
+`scripts/audit_lean_trust.py`.
 -/
 
 namespace LeanCipher.GeneratedVerifiedLemmas
 
 open LeanCipher
 
-set_option checkBinderAnnotations false
-
-
-
-
-
-
-
 theorem tu_deng_sum_representative_dichotomy
     (k t a b : ℕ)
-    (hk : 2 ≤ k)
+    (_hk : 2 ≤ k)
     (ht_pos : 1 ≤ t)
     (ht_upper : t ≤ 2 ^ k - 2)
     (ha : a ≤ 2 ^ k - 2)
@@ -105,9 +97,7 @@ theorem tu_deng_cyclic_carry_trace_iff_sum
       · simp [Nat.testBit, hu]
     have bit_succ (u j : ℕ) :
         Nat.testBit u (j + 1) = Nat.testBit (u / 2) j := by
-      first
-      | simpa using Nat.testBit_succ u j
-      | simp [Nat.testBit, Nat.shiftRight]
+      simpa using Nat.testBit_succ u j
     have trace_unique :
         ∀ (n x y z : ℕ) (p r : Bool)
           (c d : Fin (n + 1) → Bool),
@@ -455,8 +445,7 @@ theorem tu_deng_cyclic_carry_weight_identity
       have hallones :
           (Finset.univ : Finset (Fin k)).sum
               (fun i => (Nat.testBit (2 ^ k - 1) i.val).toNat) = k := by
-        simpa [LeanCipher.binaryWeightUpTo] using
-          LeanCipher.binaryWeightUpTo_all_ones k
+        simp
       omega
 
 
@@ -480,7 +469,7 @@ theorem tu_deng_positive_carry_deficit_excludes_extra_representatives
     (k t : ℕ)
     (c : Fin (k + 1) → Bool)
     (a b : Fin (2 ^ k))
-    (hk : 2 ≤ k)
+    (_hk : 2 ≤ k)
     (hcycle : c 0 = c (Fin.last k))
     (hstep :
       ∀ i : Fin k,
@@ -710,8 +699,8 @@ theorem tu_deng_mem_product_range_iff_bounded
 theorem tu_deng_count_eq_explicit_bounded_pair_filter
     {k t : Nat}
     (hk : 2 ≤ k)
-    (ht_pos : 1 ≤ t)
-    (ht_upper : t ≤ 2 ^ k - 2) :
+    (_ht_pos : 1 ≤ t)
+    (_ht_upper : t ≤ 2 ^ k - 2) :
     tuDengCount k t =
       (((Finset.range (2 ^ k)).product (Finset.range (2 ^ k))).filter
         (fun ab =>
@@ -774,7 +763,7 @@ theorem tu_deng_modeq_iff_sum_branches
     rcases hsum with hsum | hsum
     · rw [hsum]
     · rw [hsum]
-      simp [Nat.ModEq, Nat.add_mod]
+      simp [Nat.ModEq]
 
 
 
@@ -922,7 +911,7 @@ theorem tu_deng_count_eq_sum_branch_cards
       · rcases hsecond with ⟨hpairs, ha, hb, hsum, hw⟩
         have hcong : Nat.ModEq (2 ^ k - 1) (ab.1 + ab.2) t := by
           rw [hsum]
-          simp [Nat.ModEq, Nat.add_mod]
+          simp [Nat.ModEq]
         exact ⟨hpairs, ha, hb, hcong, hw⟩
   have hmodulus_pos : 0 < 2 ^ k - 1 := by
     have hpow : 2 ≤ 2 ^ k := tu_deng_two_le_pow_of_two_le k hk
@@ -967,7 +956,7 @@ theorem tu_deng_endpoint_local_pair_forces_positive_deficit
     (c : Fin (k + 1) → Bool)
     (endpoint : Bool)
     (a b : Fin (2 ^ k))
-    (hk : 2 ≤ k)
+    (_hk : 2 ≤ k)
     (hstart : c 0 = endpoint)
     (hfinish : c (Fin.last k) = endpoint)
     (hstep :
@@ -1173,7 +1162,7 @@ theorem tu_deng_cyclic_carry_trace_exists_unique_of_witness
 theorem tu_deng_fixed_sum_branch_eq_carry_fiber_sum
     {k t : Nat}
     (hk : 2 ≤ k)
-    (ht_pos : 1 ≤ t)
+    (_ht_pos : 1 ≤ t)
     (ht_upper : t ≤ 2 ^ k - 2)
     (q : Bool) :
     (((Finset.range (2 ^ k)).product (Finset.range (2 ^ k))).filter
@@ -1299,8 +1288,7 @@ theorem tu_deng_binary_weight_up_to_succ
     rcases hcases with hzero | hone
     · simp [hzero]
     · simp [hone]
-  simp [binaryWeightUpTo, Finset.sum_range_succ, hbit, Nat.add_comm,
-    Nat.add_left_comm, Nat.add_assoc]
+  simp [binaryWeightUpTo, Finset.sum_range_succ, hbit]
 
 
 
@@ -1323,7 +1311,7 @@ theorem tu_deng_test_bit_sum_succ
 
 theorem tu_deng_binary_weight_up_to_eq_test_bit_sum
     (k n : Nat)
-    (hn : n < 2 ^ k) :
+    (_hn : n < 2 ^ k) :
     binaryWeightUpTo k n =
       (Finset.univ : Finset (Fin k)).sum
         (fun i => (Nat.testBit n i.val).toNat) := by
@@ -1543,9 +1531,7 @@ theorem tu_deng_fixed_carry_trace_fiber_card_zero_of_endpoint_mismatch
     have hp := (Finset.mem_filter.mp hab).2
     exact ⟨hp.2.2.2.1, hp.2.2.2.2.1⟩
   · intro hab
-    have hfalse : False := by
-      simpa using hab
-    exact hfalse.elim
+    simp at hab
 
 
 
@@ -1705,7 +1691,7 @@ theorem tu_deng_positive_deficit_root_fiber_mem_iff_local_projection_image (k t 
         · simpa [b] using hb_le⟩
     apply Finset.mem_image.mpr
     refine ⟨x, Finset.mem_univ x, ?_⟩
-    simpa [x, a, b] using (Prod.eta ab)
+    simp [x, a, b]
   · intro hab
     rcases Finset.mem_image.mp hab with ⟨x, hxuniv, hproj⟩
     subst ab
@@ -2026,7 +2012,7 @@ theorem tu_deng_count_eq_closed_admissible_carry_weight_sum
   rw [show (Finset.univ : Finset Bool) = {false, true} by decide]
   cases h0 : c 0 <;>
     cases hl : c (Fin.last k) <;>
-    simp [h0, hl]
+    simp
 
 
 
@@ -2119,7 +2105,7 @@ theorem tu_deng_bool_digit_carry_accounting_step
           (if x = false ∧ y = false then 1 else 0) =
       1 + (if x = true ∧ y = true then 1 else 0) +
         cin.toNat := by
-  cases x <;> cases y <;> simp_all <;> omega
+  cases x <;> cases y <;> cases d <;> cases cin <;> cases cout <;> simp_all
 
 
 
@@ -2236,7 +2222,7 @@ theorem tu_deng_complement_circular_endpoint_iff
       c (0 : Fin (k + 1)) = c (Fin.last k) := by
   cases hzero : c (0 : Fin (k + 1)) <;>
     cases hlast : c (Fin.last k) <;>
-    simp [hzero, hlast]
+    simp
 
 
 
@@ -2286,7 +2272,7 @@ theorem tu_deng_low_bit_complement_below_pow
 theorem tu_deng_complemented_carry_trace_invariants
     {k t : Nat}
     (hk : 2 ≤ k)
-    (ht_pos : 1 ≤ t)
+    (_ht_pos : 1 ≤ t)
     (ht_upper : t ≤ 2 ^ k - 2)
     (c : Fin (k + 1) → Bool) :
     let tc := 2 ^ k - 1 - t
@@ -2328,7 +2314,7 @@ theorem tu_deng_complemented_carry_trace_invariants
     intro i
     exact tu_deng_low_bit_complement_below_pow k t ht_lt i
   refine ⟨?_, ?_, ?_, ?_⟩
-  · simpa using tu_deng_complement_circular_endpoint_iff k c
+  · simp
   · constructor
     · rintro ⟨i, hprev, hnext⟩
       refine ⟨i, ?_, ?_⟩
@@ -2356,7 +2342,7 @@ theorem tu_deng_complemented_carry_trace_invariants
     rw [hbit i]
     cases htarget : Nat.testBit t i.val <;>
       cases hcarry : c i.castSucc <;>
-      simp [htarget, hcarry]
+      simp
   · have h11 :
         (Finset.univ.filter (fun i : Fin k =>
           Nat.testBit (2 ^ k - 1 - t) i.val = true ∧
@@ -2368,7 +2354,7 @@ theorem tu_deng_complemented_carry_trace_invariants
       rw [hbit i]
       cases htarget : Nat.testBit t i.val <;>
         cases hcarry : c i.castSucc <;>
-        simp [htarget, hcarry]
+        simp
     have h00 :
         (Finset.univ.filter (fun i : Fin k =>
           Nat.testBit (2 ^ k - 1 - t) i.val = false ∧
@@ -2380,7 +2366,7 @@ theorem tu_deng_complemented_carry_trace_invariants
       rw [hbit i]
       cases htarget : Nat.testBit t i.val <;>
         cases hcarry : c i.castSucc <;>
-        simp [htarget, hcarry]
+        simp
     rw [tu_deng_positive_carry_deficit_iff_match_balance
       k (2 ^ k - 1 - t) (fun j => !(c j))]
     rw [h11, h00]
@@ -2457,8 +2443,8 @@ theorem tu_deng_complement_paired_gated_weight_le_closed_weight
         · have hlt := horigDeficit.mp hd
           have hltc := hcompDeficit.mp hdc
           exact (Nat.lt_asymm hlt hltc).elim
-        · simp only [hc, hcc, hf, hfc, hd, hdc, true_and, if_true,
-            if_false, zero_add, add_zero, le_refl]
+        · simp only [hc, hf, hfc, hd, hdc, true_and, if_true,
+            if_false, add_zero, le_refl]
       · by_cases hdc : 0 <
             k -
               ((Finset.univ : Finset (Fin k)).sum
@@ -2466,10 +2452,10 @@ theorem tu_deng_complement_paired_gated_weight_le_closed_weight
                     (Nat.testBit (2 ^ k - 1 - t) i.val).toNat) +
                 (Finset.univ : Finset (Fin k)).sum
                   (fun i => (Bool.not (c i.castSucc)).toNat))
-        · simp only [hc, hcc, hf, hfc, hd, hdc, true_and, if_true,
-            if_false, zero_add, add_zero, le_refl]
-        · simp only [hc, hcc, hf, hfc, hd, hdc, true_and, if_true,
-            if_false, zero_add, add_zero, le_refl]
+        · simp only [hc, hf, hfc, hd, hdc, true_and, if_true,
+            if_false, add_zero, le_refl]
+        · simp only [hc, hf, hfc, hd, hdc, true_and, if_true,
+            if_false, add_zero, le_refl]
     · have hfc : ¬ ∃ i : Fin k,
           Bool.not (c i.castSucc) =
               Bool.not (Nat.testBit (2 ^ k - 1 - t) i.val) ∧
@@ -2493,8 +2479,8 @@ theorem tu_deng_complement_paired_gated_weight_le_closed_weight
         · have hlt := horigDeficit.mp hd
           have hltc := hcompDeficit.mp hdc
           exact (Nat.lt_asymm hlt hltc).elim
-        · simp only [hc, hcc, hf, hfc, hd, hdc, true_and, if_true,
-            if_false, zero_add, add_zero, le_refl]
+        · simp only [hc, hf, hfc, hd, hdc, true_and, if_true,
+            if_false, add_zero, le_refl]
       · by_cases hdc : 0 <
             k -
               ((Finset.univ : Finset (Fin k)).sum
@@ -2503,10 +2489,10 @@ theorem tu_deng_complement_paired_gated_weight_le_closed_weight
                 (Finset.univ : Finset (Fin k)).sum
                   (fun i => (Bool.not (c i.castSucc)).toNat))
         · rw [hexponent]
-          simp only [hc, hcc, hf, hfc, hd, hdc, true_and, if_true,
-            if_false, zero_add, add_zero, le_refl]
-        · simp only [hc, hcc, hf, hfc, hd, hdc, true_and, if_true,
-            if_false, zero_add, add_zero, Nat.zero_le]
+          simp only [hc, hf, hfc, hd, hdc, true_and, if_true,
+            if_false, zero_add, le_refl]
+        · simp only [hc, hf, hfc, hd, hdc, true_and, if_true,
+            if_false, add_zero, Nat.zero_le]
   · have hcc : ¬ Bool.not (c 0) = Bool.not (c (Fin.last k)) := by
       intro h
       exact hc (hclose.mp h)

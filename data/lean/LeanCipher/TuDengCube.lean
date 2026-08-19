@@ -643,7 +643,7 @@ theorem biasedMass_half_le_half_of_profile_comparison
         ((hasDerivAt_const (x := p) (c := (1 : ℝ))).sub (hasDerivAt_id p))
     have hright := hasDerivAt_biasedMass_eq_pivotalProfile B hB p
     dsimp only [H]
-    convert hleft.add hright using 1 <;> ring
+    convert hleft.add hright using 1; ring
   have hHcont : Continuous H :=
     continuous_iff_continuousAt.mpr fun p => (hH p).continuousAt
   have hanti : AntitoneOn H (Set.Icc 0 (1 / 2)) := by

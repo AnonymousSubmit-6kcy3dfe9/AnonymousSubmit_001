@@ -387,6 +387,7 @@ noncomputable def assignedListIndex
     (x : I) : Fin values.length :=
   ⟨values.idxOf (g x), List.idxOf_lt_length_of_mem (hmem x)⟩
 
+omit [Fintype I] [DecidableEq I] in
 @[simp] theorem assignedListIndex_get
     (values : List A) (g : I -> A) (hmem : ∀ x, g x ∈ values)
     (x : I) :
@@ -399,12 +400,14 @@ noncomputable def fiberMultiplicity
   ∑ x ∈ (Finset.univ : Finset I) with
       assignedListIndex values g hmem x = index, 1
 
+omit [DecidableEq I] in
 theorem fiberMultiplicity_nonnegative
     (values : List A) (g : I -> A) (hmem : ∀ x, g x ∈ values)
     (index : Fin values.length) :
     0 ≤ fiberMultiplicity values g hmem index := by
   exact Finset.sum_nonneg fun _ _ => by norm_num
 
+omit [DecidableEq I] in
 theorem sum_fiberMultiplicity_mul
     (values : List A) (g : I -> A) (hmem : ∀ x, g x ∈ values)
     (phi : A -> Rat) :

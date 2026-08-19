@@ -152,8 +152,7 @@ theorem magnitudeCount_eq_sum_indicator
     magnitudeCount spectrum m =
       ∑ a : V 7, if spectrum a = m then 1 else 0 := by
   symm
-  simpa [magnitudeCount] using
-    Finset.sum_boole (R := Nat) (fun a : V 7 => spectrum a = m) Finset.univ
+  simp [magnitudeCount, Finset.sum_boole]
 
 theorem localCellCount_eq_sum_indicator
     (f : V 8 -> ZMod 2) (ell : V 7) (odd even : Nat) :
@@ -162,11 +161,7 @@ theorem localCellCount_eq_sum_indicator
         if oddMagnitude f (a + ell) = odd ∧ evenMagnitude f a = even
         then 1 else 0 := by
   symm
-  simpa [localCellCount] using
-    Finset.sum_boole (R := Nat)
-      (fun a : V 7 =>
-        oddMagnitude f (a + ell) = odd ∧ evenMagnitude f a = even)
-      Finset.univ
+  simp [localCellCount, Finset.sum_boole]
 
 theorem localTable_sum
     (f : V 8 -> ZMod 2) (hf : weight f = 128)
@@ -276,7 +271,7 @@ theorem oriented_slice_sum (f : V 8 -> ZMod 2) (ell a : V 7) :
 
 theorem oriented_slice_difference_abs
     (f : V 8 -> ZMod 2) (ell a : V 7)
-    (hne : walsh f (join (a + ell) 1) ≠ 0) :
+    (_hne : walsh f (join (a + ell) 1) ≠ 0) :
     (walsh (orientedLowerSlice f ell) a -
         walsh (orientedUpperSlice f ell) a).natAbs =
       (walsh f (join (a + ell) 1)).natAbs := by

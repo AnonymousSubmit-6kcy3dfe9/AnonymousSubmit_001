@@ -89,7 +89,7 @@ theorem walsh_join_eq_slice_sum
   apply Finset.sum_congr rfl
   intro x _
   rw [show (Finset.univ : Finset (ZMod 2)) = {0, 1} by native_decide]
-  simp [sub_eq_add_neg]
+  simp
 
 theorem walsh_join_eq_slice_difference
     (f : V 8 -> ZMod 2) (a : V 7) :

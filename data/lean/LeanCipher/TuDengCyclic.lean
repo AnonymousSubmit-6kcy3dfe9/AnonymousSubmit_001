@@ -19,7 +19,7 @@ theorem gate_mono_state {a b : Prop} {x d : Bool} (h : a -> b) :
 
 theorem gate_mono_input {state : Prop} {x y d : Bool} (h : x.toNat <= y.toNat) :
     gate state x d -> gate state y d := by
-  cases x <;> cases y <;> cases d <;> simp_all [gate] <;> omega
+  cases x <;> cases y <;> cases d <;> simp_all [gate]
 
 def carryOperator (x d : InputWord k) : CarryWord k →o CarryWord k where
   toFun c j := gate (c (j - 1)) (x (j - 1)) (d (j - 1))
@@ -33,16 +33,19 @@ def selectedCarry (x d : InputWord k) : CarryWord k :=
 def CarryCompatible (x d : InputWord k) (c : CarryWord k) : Prop :=
   forall j, c (j + 1) <-> gate (c j) (x j) (d j)
 
+omit [NeZero k] in
 theorem selectedCarry_fixed (x d : InputWord k) :
     carryOperator x d (selectedCarry x d) = selectedCarry x d :=
   (carryOperator x d).map_gfp
 
+omit [NeZero k] in
 theorem selectedCarry_compatible (x d : InputWord k) :
     CarryCompatible x d (selectedCarry x d) := by
   intro j
   have h := congrFun (selectedCarry_fixed x d) (j + 1)
   simpa [carryOperator] using iff_of_eq h.symm
 
+omit [NeZero k] in
 theorem compatible_le_selected {x d : InputWord k} {c : CarryWord k}
     (hc : CarryCompatible x d c) : c <= selectedCarry x d := by
   apply (carryOperator x d).le_gfp
@@ -50,6 +53,7 @@ theorem compatible_le_selected {x d : InputWord k} {c : CarryWord k}
   have h := (hc (j - 1)).mp (by simpa using hj)
   simpa [carryOperator] using h
 
+omit [NeZero k] in
 theorem selectedCarry_mono {x y d : InputWord k}
     (hxy : forall j, (x j).toNat <= (y j).toNat) :
     selectedCarry x d <= selectedCarry y d := by
@@ -59,6 +63,7 @@ theorem selectedCarry_mono {x y d : InputWord k}
   intro c j
   exact gate_mono_input (hxy (j - 1))
 
+omit [NeZero k] in
 theorem compatible_support {x d : InputWord k} {c : CarryWord k}
     (hc : CarryCompatible x d c) {j : ZMod k} (hmatch : c j <-> d j = true) :
     c (j + 1) <-> c j := by
@@ -68,12 +73,13 @@ theorem compatible_support {x d : InputWord k} {c : CarryWord k}
   · rw [if_pos hxd, hmatch]
   · rw [if_neg hxd]
 
+omit [NeZero k] in
 theorem compatible_mismatch {x d : InputWord k} {c : CarryWord k}
     (hc : CarryCompatible x d c) {j : ZMod k} (hmis : ¬ (c j <-> d j = true)) :
     (x j = true) <-> c (j + 1) := by
   rw [hc j]
   cases hx : x j <;> cases hd : d j <;>
-    simp [gate, hx, hd] at hmis ⊢ <;> assumption
+    simp [gate, hd] at hmis ⊢ <;> assumption
 
 noncomputable def carrySet (c : CarryWord k) : Finset (ZMod k) :=
   by classical exact Finset.univ.filter c
@@ -111,6 +117,7 @@ def cycleEquiv (i : ZMod k) : Fin k ≃ ZMod k :=
       apply Fin.ext
       exact (Nat.mod_eq_of_lt r.isLt).symm
 
+omit [NeZero k] in
 theorem natCast_ne_zero_of_pos_of_lt {r : Nat} (hr0 : 0 < r) (hrk : r < k) :
     (r : ZMod k) ≠ 0 := by
   intro hzero
@@ -121,6 +128,7 @@ def IsFlip (lower upper : InputWord k) (i : ZMod k) : Prop :=
   lower i = false /\ upper i = true /\
     forall j, j ≠ i -> lower j = upper j
 
+omit [NeZero k] in
 theorem flip_input_mono {lower upper : InputWord k} {i : ZMod k}
     (hflip : IsFlip lower upper i) :
     forall j, (lower j).toNat <= (upper j).toNat := by
@@ -130,6 +138,7 @@ theorem flip_input_mono {lower upper : InputWord k} {i : ZMod k}
     simp [hflip.1, hflip.2.1]
   · rw [hflip.2.2 j hji]
 
+omit [NeZero k] in
 theorem compatible_eq_next_of_ne_flip
     {lower upper d : InputWord k} {lo hi : CarryWord k} {i j : ZMod k}
     (hflip : IsFlip lower upper i)
@@ -139,12 +148,13 @@ theorem compatible_eq_next_of_ne_flip
     hi (j + 1) <-> lo (j + 1) := by
   rw [hhi j, hlo j, hflip.2.2 j hji, heq]
 
+omit [NeZero k] in
 theorem compatible_eq_forward
     {lower upper d : InputWord k} {lo hi : CarryWord k} {i : ZMod k}
     (hflip : IsFlip lower upper i)
     (hlo : CarryCompatible lower d lo)
     (hhi : CarryCompatible upper d hi)
-    {s : Nat} (hs0 : 0 < s) (hsk : s <= k)
+    {s : Nat} (hs0 : 0 < s) (_hsk : s <= k)
     (heq : hi (i + (s : ZMod k)) <-> lo (i + (s : ZMod k))) :
     forall n : Nat, s + n <= k ->
       (hi (i + (s + n : Nat)) <-> lo (i + (s + n : Nat))) := by
@@ -173,6 +183,7 @@ theorem compatible_eq_forward
 noncomputable def cyclicPrefix (i : ZMod k) (n : Nat) : Finset (ZMod k) :=
   (Finset.range n).image (fun r => i + ((r + 1 : Nat) : ZMod k))
 
+omit [NeZero k] in
 theorem cyclicPrefix_card_le (i : ZMod k) (n : Nat) :
     (cyclicPrefix i n).card <= n := by
   classical
@@ -209,8 +220,8 @@ theorem diffSet_subset_cyclicPrefix_of_eq
     have heqk := compatible_eq_forward hflip hlo hhi hs0 hsk heq (k - s) (by omega)
     have hik : i + ((s + (k - s) : Nat) : ZMod k) = i := by
       rw [show s + (k - s) = k by omega]
-      simp [ZMod.natCast_self]
-    have hjEq : j = i := by simpa [hjr, hrzero]
+      simp
+    have hjEq : j = i := by simp [hjr, hrzero]
     rw [hik] at heqk
     rw [hjEq] at hjhi hjlo
     exact hjlo (heqk.mp hjhi)
@@ -246,7 +257,7 @@ theorem diffSet_card_lt_of_eq
 theorem pivotal_prefix_difference
     {lower upper d : InputWord k} {i : ZMod k}
     (hflip : IsFlip lower upper i)
-    (m h : Nat) (hh : 0 < h) (hhk : h < k)
+    (m h : Nat) (_hh : 0 < h) (hhk : h < k)
     (hupper : weight (selectedCarry upper d) = m + h)
     (hlower : weight (selectedCarry lower d) <= m) :
     forall s : Nat, 0 < s -> s <= h ->
@@ -290,7 +301,7 @@ theorem full_difference_of_difference_at_flip
     rw [cycleEquiv_apply] at h
     simpa [add_comm] using h.symm
   by_cases hr0 : r.val = 0
-  · have hjEq : j = i := by simpa [hjr, hr0]
+  · have hjEq : j = i := by simp [hjr, hr0]
     simpa [hjEq] using And.intro hhi_i hlo_i
   · have hrpos : 0 < r.val := by omega
     have hne : ¬ (hi j <-> lo j) := by
@@ -313,6 +324,7 @@ theorem full_difference_of_difference_at_flip
         exact hhij (hmono j h)
       exact (hne (iff_of_false hhij hloj)).elim
 
+omit [NeZero k] in
 theorem constant_true_compatible_of_input_ne_target
     {x d : InputWord k} (hne : forall j, x j ≠ d j) :
     CarryCompatible x d (fun _ => True) := by
@@ -376,12 +388,13 @@ theorem pivotal_flip_is_mismatch
     compatible_le_selected htopCompatible
   exact hlo_i (htopLe i trivial)
 
+omit [NeZero k] in
 theorem pivotal_forced_zero
     {lower upper d : InputWord k} {i : ZMod k}
     {r : Nat} (hr0 : 0 < r) (hrk : r < k)
     (hflip : IsFlip lower upper i)
-    (hcurrHi : selectedCarry upper d (i + (r : ZMod k)))
-    (hcurrLo : ¬ selectedCarry lower d (i + (r : ZMod k)))
+    (_hcurrHi : selectedCarry upper d (i + (r : ZMod k)))
+    (_hcurrLo : ¬ selectedCarry lower d (i + (r : ZMod k)))
     (hnextLo : ¬ selectedCarry lower d (i + (r + 1 : Nat)))
     (hd : d (i + (r : ZMod k)) = true) :
     upper (i + (r : ZMod k)) = false := by
@@ -438,12 +451,13 @@ theorem pivotal_conditions_of_rank_crossing
     exact pivotal_forced_zero hr0 (by omega) hflip hcurr.1 hcurr.2
       (by simpa [Nat.cast_add, Nat.cast_one] using hnext'.2) hd
 
+omit [NeZero k] in
 theorem lower_next_false_at_flip
     {lower upper d : InputWord k} {i : ZMod k}
     (hflip : IsFlip lower upper i)
     (hmono : selectedCarry lower d ≤ selectedCarry upper d)
     (hmis : ¬ (selectedCarry upper d i ↔ d i = true))
-    (hnextHi : selectedCarry upper d (i + 1)) :
+    (_hnextHi : selectedCarry upper d (i + 1)) :
     ¬ selectedCarry lower d (i + 1) := by
   have hlo := selectedCarry_compatible lower d
   have hhi := selectedCarry_compatible upper d
@@ -461,6 +475,7 @@ theorem lower_next_false_at_flip
       rw [hlo i]
       simp [gate, hflip.1, hd, hnlo]
 
+omit [NeZero k] in
 theorem lower_next_false_of_prefix
     {lower upper d : InputWord k} {i : ZMod k} {r : Nat}
     (hr0 : 0 < r) (hrk : r < k)
@@ -481,17 +496,18 @@ theorem lower_next_false_of_prefix
     simp [Nat.cast_add, Nat.cast_one, add_assoc]]
   rw [hcompat (i + (r : ZMod k))]
   cases hd : d (i + (r : ZMod k)) with
-  | false => simp [gate, hd, hcurrLo]
+  | false => simp [gate, hcurrLo]
   | true =>
       have hupp : upper (i + (r : ZMod k)) = false := hforced hd
       have hlow : lower (i + (r : ZMod k)) = false := by
         rw [hinput, hupp]
-      simp [gate, hd, hlow, hcurrLo]
+      simp [gate, hlow, hcurrLo]
 
+omit [NeZero k] in
 theorem prefix_difference_of_pivotal_conditions
     {lower upper d : InputWord k} {i : ZMod k} {h : Nat}
     (hflip : IsFlip lower upper i)
-    (hh : 0 < h) (hhk : h < k)
+    (_hh : 0 < h) (hhk : h < k)
     (hcond : PivotalConditions d upper (selectedCarry upper d) i h) :
     ∀ r : Nat, 0 < r → r ≤ h →
       selectedCarry upper d (i + (r : ZMod k)) ∧
@@ -572,6 +588,7 @@ theorem rank_crossing_iff_pivotal_conditions
   · exact pivotal_conditions_of_rank_crossing hflip m h hh hhk hupper
   · exact rank_below_of_pivotal_conditions hflip m h hh hhk hupper
 
+omit [NeZero k] in
 theorem compatible_eq_next_same_input
     {x d : InputWord k} {lo hi : CarryWord k} {j : ZMod k}
     (hlo : CarryCompatible x d lo) (hhi : CarryCompatible x d hi)
@@ -638,6 +655,7 @@ theorem compatible_bad_eq_selected
     have hcZero : weight c = 0 := by simp [weight, hcEmpty]
     omega
 
+omit [NeZero k] in
 theorem compatible_iff_of_support
     {x d : InputWord k} {c : CarryWord k}
     (hsupport : ∀ j, (c j ↔ d j = true) → (c (j + 1) ↔ c j)) :

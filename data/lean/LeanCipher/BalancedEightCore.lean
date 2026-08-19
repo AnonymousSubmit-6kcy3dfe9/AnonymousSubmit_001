@@ -247,11 +247,9 @@ theorem supportIntersection_cast_eq_dot (f : V n -> ZMod 2) (a : V n) :
         by_cases hd0 : f2Dot a x = 0
         · simp [hf0, hd0]
         · have hd1 := zmod2_eq_one_of_ne_zero hd0
-          simp [hf0, hd0, hf1, hd1]
+          simp [hf1, hd1]
     _ = (supportIntersection f a : ZMod 2) := by
-      simpa [supportIntersection] using
-        Finset.sum_boole (R := ZMod 2)
-          (fun x : V n => f x ≠ 0 ∧ f2Dot a x ≠ 0) Finset.univ
+      simp [supportIntersection, Finset.sum_boole]
 
 theorem normalized_walsh_parity
     (f : V 8 -> ZMod 2) (hf : weight f = 128) (a : V 8) :

@@ -13,10 +13,12 @@ variable {k : Nat} [NeZero k]
 noncomputable def inputOfSet (s : Finset (ZMod k)) : InputWord k :=
   fun j => decide (j ∈ s)
 
+omit [NeZero k] in
 @[simp] theorem inputOfSet_eq_true {s : Finset (ZMod k)} {j : ZMod k} :
     inputOfSet s j = true ↔ j ∈ s := by
   simp [inputOfSet]
 
+omit [NeZero k] in
 @[simp] theorem inputOfSet_eq_false {s : Finset (ZMod k)} {j : ZMod k} :
     inputOfSet s j = false ↔ j ∉ s := by
   simp [inputOfSet]
@@ -58,6 +60,7 @@ noncomputable def propBadFamily (d : InputWord k) :
       inputWeight d < weight (selectedCarry (inputOfSet s) d) := by
   simp [propBadFamily]
 
+omit [NeZero k] in
 theorem inputOfSet_mono {s t : Finset (ZMod k)} (hst : s ⊆ t) :
     ∀ j, (inputOfSet s j).toNat ≤ (inputOfSet t j).toNat := by
   intro j
@@ -74,6 +77,7 @@ theorem propBadFamily_increasing (d : InputWord k) :
   have hcard := Finset.card_le_card (carrySet_mono hcarry)
   exact hs.trans_le hcard
 
+omit [NeZero k] in
 theorem inputOfSet_insert_isFlip {s : Finset (ZMod k)} {i : ZMod k}
     (hi : i ∉ s) :
     IsFlip (inputOfSet s) (inputOfSet (insert i s)) i := by
@@ -257,6 +261,7 @@ theorem active_flip_mem_outgoingOneSet
   have hnext' : g.1 + 1 ∈ g.2 := by simpa using hnext
   simp [outgoingOneSet, mismatchSet, hshape.2.2.1, hnext']
 
+omit [NeZero k] in
 theorem mem_forcedZeroSet_of_position
     {d : InputWord k} {i : ZMod k} {h r : Nat}
     (hr0 : 0 < r) (hrh : r < h)
@@ -269,6 +274,7 @@ theorem mem_forcedZeroSet_of_position
   congr 1
   norm_num [show r - 1 + 1 = r by omega]
 
+omit [NeZero k] in
 theorem forcedZeroSet_position
     {d : InputWord k} {i j : ZMod k} {h : Nat}
     (hj : j ∈ forcedZeroSet d i h) :
@@ -477,7 +483,7 @@ theorem constraints_imply_pivotal_group
   · simp only [edgeGroup]
     change carrySet (selectedCarry upper d) = g.2
     rw [← hcSelected]
-    simpa [c] using carrySet_carryOfSet g.2
+    simp [c]
 
 theorem pivotal_group_iff_constraints
     {d : InputWord k} (hdpos : 0 < inputWeight d)
@@ -631,6 +637,7 @@ theorem active_mismatch_balance
     (setOfInput d) hU hsupport hDC
   simpa [shift, outgoingOneSet, hcardD] using hbal
 
+omit [NeZero k] in
 theorem forcedZeroSet_card_le
     (d : InputWord k) (i : ZMod k) (h : Nat) :
     (forcedZeroSet d i h).card ≤ h - 1 := by
@@ -707,7 +714,7 @@ theorem pivotalProfile_eq_activeGroups
                 edgeWeight p i s else 0 := by
             apply Finset.sum_eq_single (edgeGroup d i s)
             · intro g _ hne
-              simp [hpiv, hne.symm]
+              simp [hne.symm]
             · intro hnot
               exact (hnot hmem).elim
           _ = edgeWeight p i s := by simp [hpiv]
@@ -740,6 +747,6 @@ theorem propBadFamily_profile_comparison
   have hmono := biasedMonomial_complement_sub_nonneg
     (active_fixedZero_le_fixedOne hdpos hg) hp
   have hle := sub_nonneg.mp hmono
-  convert hle using 1 <;> ring
+  convert hle using 1; ring
 
 end LeanCipher.TuDengPartition

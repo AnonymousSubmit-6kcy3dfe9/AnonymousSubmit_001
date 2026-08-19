@@ -219,9 +219,7 @@ private theorem absNineCount_le_38_of_residue_one
   have hcount :
       (∑ a : Vec, if (gamma a).natAbs = 9 then (1 : Int) else 0) =
         (absNineCount gamma : Int) := by
-    simpa [absNineCount] using
-      Finset.sum_boole (R := Int)
-        (fun a : Vec => (gamma a).natAbs = 9) Finset.univ
+    simp [absNineCount, Finset.sum_boole]
   have hsumUpper : (∑ a : Vec, gamma a) <= 64 := by
     have h : (∑ a : Vec, gamma a) <=
         ((∑ a : Vec, gamma a).natAbs : Int) := Int.le_natAbs
@@ -262,9 +260,7 @@ private theorem absNineCount_le_38_of_residue_neg_one
   have hcount :
       (∑ a : Vec, if (gamma a).natAbs = 9 then (1 : Int) else 0) =
         (absNineCount gamma : Int) := by
-    simpa [absNineCount] using
-      Finset.sum_boole (R := Int)
-        (fun a : Vec => (gamma a).natAbs = 9) Finset.univ
+    simp [absNineCount, Finset.sum_boole]
   have hsumLower : -(64 : Int) <= (∑ a : Vec, gamma a) := by
     have h := neg_natAbs_le (∑ a : Vec, gamma a)
     omega
@@ -390,9 +386,7 @@ private theorem pairIndicator_sum_eq_pairCount
     (P Q : Vec -> Int) (r s : Nat) :
     (∑ a : Vec, pairIndicator (P a) (Q a) r s) =
       (pairCount P Q r s : Int) := by
-  simpa [pairIndicator, pairCount] using
-    Finset.sum_boole (R := Int)
-      (fun a : Vec => (P a).natAbs = r ∧ (Q a).natAbs = s) Finset.univ
+  simp [pairIndicator, pairCount, Finset.sum_boole]
 
 private theorem pairDelta_eq_count_sub
     (P Q : Vec -> Int) (r s : Nat) :
@@ -686,8 +680,7 @@ private theorem orientationQuadraticDifference_pairDelta_eq_sum
         (pairDelta P Q 7 3) (pairDelta P Q 5 1) (pairDelta P Q 3 1) =
       ∑ a : Vec, quadraticDifferencePoint (P a) (Q a) := by
   simp only [orientationQuadraticDifference, pairDelta,
-    quadraticDifferencePoint, Finset.sum_add_distrib,
-    Finset.sum_sub_distrib, Finset.sum_neg_distrib]
+    quadraticDifferencePoint, Finset.sum_add_distrib, Finset.sum_neg_distrib]
 
 private theorem totalScore_eq_sum_tableScorePoint
     (f : V 8 -> ZMod 2) (hf : weight f = 128)
@@ -834,8 +827,7 @@ private theorem pairCount_left_le_absNineCount
     pairCount P Q 9 s ≤ absNineCount P := by
   apply Finset.card_le_card
   intro a ha
-  simp only [pairCount, absNineCount, Finset.mem_filter,
-    Finset.mem_univ, true_and] at ha ⊢
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha ⊢
   exact ha.1
 
 private theorem pairCount_right_le_absNineCount
@@ -843,8 +835,7 @@ private theorem pairCount_right_le_absNineCount
     pairCount P Q r 9 ≤ absNineCount Q := by
   apply Finset.card_le_card
   intro a ha
-  simp only [pairCount, absNineCount, Finset.mem_filter,
-    Finset.mem_univ, true_and] at ha ⊢
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha ⊢
   exact ha.2
 
 private theorem local_extreme_le

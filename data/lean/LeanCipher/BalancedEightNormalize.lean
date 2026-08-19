@@ -66,7 +66,7 @@ theorem exists_normalizing_covector (c : V 8) (hc : c ≠ 0) :
       simp [lastBasis, hlast', hiOne, lastIndex]
   · have hlastOne : c lastIndex = 1 := zmod2_eq_one_of_ne_zero hlast
     refine ⟨lastBasis, ?_, ?_⟩
-    · simpa [lastBasis] using lastBasis_apply_last
+    · simp [lastBasis]
     · simpa [lastBasis] using hlastOne
 
 noncomputable def normalizingCovector (c : V 8) (hc : c ≠ 0) : V 8 :=

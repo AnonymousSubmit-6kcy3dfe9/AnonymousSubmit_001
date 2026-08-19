@@ -19,17 +19,15 @@ import Mathlib.Tactic
 
 /-!
 This file contains mechanically assembled quadratic-form lemmas. It has been
-normalized for publication so project-wide options appear once rather than
-before each generated declaration. All declarations are checked by the Lean
-kernel; the file contains no generated axiom or admitted theorem.
+normalized for publication and is checked with Lean's default binder-annotation
+validation enabled. All declarations are checked by the Lean kernel; the file
+contains no generated axiom or admitted theorem.
 -/
 
 namespace LeanCipher.GeneratedVerifiedLemmas
 
 
 open LeanCipher
-
-set_option checkBinderAnnotations false
 
 
 
@@ -271,7 +269,7 @@ theorem punit_product_linear_walsh_sum_eq
         (if g + Finset.univ.sum (fun j : Fin r => c j * v j) = 0
          then (1 : ℤ) else (-1 : ℤ))) := by
   classical
-  simpa [Fintype.sum_prod_type]
+  simp [Fintype.sum_prod_type]
 
 
 
@@ -1278,7 +1276,7 @@ theorem quadraticANF_zero_eval_coefficients_zero
                       have hlt : (j.1 : ℕ) < (j.1 : ℕ) := by
                         simpa [haj, hbj] using b.2
                       exact (Nat.lt_irrefl (j.1 : ℕ)) hlt
-                    simp [e, hai, haj, hbi, hbj]
+                    simp [e, haj, hbi, hbj]
                   · simp [e, hai, haj])
                 (by
                   intro hin
@@ -1320,13 +1318,13 @@ theorem eq_of_delta_coefficients_zero
       · exfalso
         have hbad : (1 : ZMod 2) = 0 := by
           change (0 : ZMod 2) + (1 : ZMod 2) = (0 : ZMod 2) at hab
-          simpa using hab
+          simp at hab
         exact zero_ne_one hbad.symm
     · fin_cases b
       · exfalso
         have hbad : (1 : ZMod 2) = 0 := by
           change (1 : ZMod 2) + (0 : ZMod 2) = (0 : ZMod 2) at hab
-          simpa using hab
+          simp at hab
         exact zero_ne_one hbad.symm
       · rfl
   constructor
@@ -3940,7 +3938,7 @@ theorem quadraticANF_balancedEvalRange_card_eq_nonzeroQuadratic_transportData_su
           ((Fin n → ZMod 2) × ZMod 2) ≃
             (Fin (r Q) → ZMod 2) × (Fin (r Q) → ZMod 2) ×
               (Fin (k Q) → ZMod 2) × ZMod 2)
-       (htransport : ∀ (Q : NonzeroQuad) (b : (Fin n → ZMod 2) × ZMod 2),
+       (_htransport : ∀ (Q : NonzeroQuad) (b : (Fin n → ZMod 2) × ZMod 2),
           (Finset.univ.sum
               (fun x : Fin n → ZMod 2 =>
                 if quadEvalRaw Q.1 x +
@@ -4122,7 +4120,7 @@ theorem card_sub_affine_of_total_eq_add
     (n total nonzero : ℕ)
     (h : total = nonzero + 2 * (2 ^ n - 1)) :
     nonzero = total - 2 * (2 ^ n - 1) := by
-  simpa [h] using (Nat.add_sub_cancel nonzero (2 * (2 ^ n - 1))).symm
+  simp [h]
 
 
 
@@ -4749,18 +4747,12 @@ theorem alternatingMatrix_succ_border_decomposition
       funext i j
       dsimp [fromF, toF]
       by_cases hi : (i : ℕ) < n
-      · have hicast : Fin.castSucc (⟨(i : ℕ), hi⟩ : Fin n) = i := by
-          ext
-          rfl
-        by_cases hj : (j : ℕ) < n
-        · have hjcast : Fin.castSucc (⟨(j : ℕ), hj⟩ : Fin n) = j := by
-            ext
-            rfl
-          simp [hi, hj, hicast, hjcast]
+      · by_cases hj : (j : ℕ) < n
+        · simp [hi, hj]
         · have hjlast : j = last := by
             apply Fin.ext
             exact Nat.le_antisymm (Nat.lt_succ_iff.mp j.isLt) (Nat.le_of_not_gt hj)
-          simp [hi, hj, hicast, hjlast]
+          simp [hi, hjlast]
       · have hilast : i = last := by
           apply Fin.ext
           exact Nat.le_antisymm (Nat.lt_succ_iff.mp i.isLt) (Nat.le_of_not_gt hi)
@@ -4777,7 +4769,7 @@ theorem alternatingMatrix_succ_border_decomposition
         · have hjlast : j = last := by
             apply Fin.ext
             exact Nat.le_antisymm (Nat.lt_succ_iff.mp j.isLt) (Nat.le_of_not_gt hj)
-          simp [hi, hj, hilast, hjlast, A.2.1 last]
+          simp [hilast, hjlast, A.2.1 last]
     right_inv := by
       intro p
       cases p with
@@ -4833,7 +4825,7 @@ theorem symmetric_tolin_dot_comm
       _ = ∑ i : Fin n, u i * (∑ j : Fin n, B i j * w j) := by
             apply Finset.sum_congr rfl
             intro i hi
-            simpa [Finset.mul_sum]
+            simp [Finset.mul_sum]
 
 
 
@@ -5059,7 +5051,7 @@ theorem kernel_dot_zerofiber_double_card_of_witness
 
 theorem borderBlock_kernel_card_eq_of_notRangeWitness
     (n : ℕ) (B : Matrix (Fin n) (Fin n) (ZMod 2))
-    (hdiag : ∀ i : Fin n, B i i = 0)
+    (_hdiag : ∀ i : Fin n, B i i = 0)
     (hsymm : ∀ i j : Fin n, B i j = B j i)
     (v z : Fin n → ZMod 2)
     (hz : B.toLin' z = 0)
@@ -5444,7 +5436,7 @@ theorem matrix_tolin_dot_sum_expand
   classical
   simp only [Matrix.toLin'_apply, Matrix.mulVec]
   unfold dotProduct
-  simp only [Finset.mul_sum, mul_assoc]
+  simp only [Finset.mul_sum]
 
 
 theorem finite_coord_submodule_exists_annihilator_of_not_mem
@@ -5528,12 +5520,12 @@ theorem linear_functional_coord_sum_zmod2
 
 theorem symmetric_matrix_column_in_range
     (n : ℕ) (B : Matrix (Fin n) (Fin n) (ZMod 2))
-    (hsymm : ∀ i j : Fin n, B i j = B j i) (j : Fin n) :
+    (_hsymm : ∀ i j : Fin n, B i j = B j i) (j : Fin n) :
     (fun i : Fin n => B i j) ∈ LinearMap.range B.toLin' := by
   classical
     exact ⟨Pi.single j 1, by
       ext i
-      simp [Matrix.mulVec, hsymm j i]⟩
+      simp [Matrix.mulVec]⟩
 
 
 theorem exists_tolin_kernel_dot_one_of_not_mem_range
@@ -5724,7 +5716,7 @@ theorem symmetric_tolin_range_kernel_dot_zero_q2
   calc
     Finset.univ.sum (fun i : Fin n => c i * y i)
         = Finset.univ.sum (fun i : Fin n => ((Matrix.toLin' B) x) i * y i) := by
-          simpa [hx]
+          simp [hx]
     _ = Finset.univ.sum (fun i : Fin n => x i * ((Matrix.toLin' B) y) i) :=
           symmetric_tolin_dot_comm n B hsymm x y
     _ = 0 := by
@@ -5864,8 +5856,7 @@ theorem upperTriangular_walsh_nonzero_add_range_element_q2
 theorem zmod_two_anchor_coset_left_inverse_q2
     {n : Nat} (a0 a : Fin n -> ZMod 2) :
     a0 + (a + a0) = a := by
-  simpa [add_comm, add_left_comm, add_assoc] using
-      (LeanCipher.f2vec_cancel_left (c := a0) (x := a))
+  simp [add_comm]
 
 
 theorem upperTriangular_walshSupport_iff_anchor_range_q2
@@ -5926,7 +5917,7 @@ theorem upperTriangular_walshSupport_iff_anchor_range_q2
 theorem zmod_two_anchor_coset_right_inverse_q2
     {n : Nat} (a0 a : Fin n -> ZMod 2) :
     (a0 + a) + a0 = a := by
-  simpa [add_comm, add_left_comm, add_assoc] using (LeanCipher.f2vec_cancel_right (x := a) (c := a0))
+  simp [add_comm]
 
 
 theorem upperTriangular_walshSupport_anchor_shift_iff_range_q2
@@ -6514,12 +6505,7 @@ theorem balanced_affine_count_from_walsh_support
                       (1 : ℤ)
                     else
                       (-1 : ℤ)) := by
-                    simpa using (Finset.sum_neg_distrib (s := Finset.univ)
-                      (f := fun x : Fin n → ZMod 2 =>
-                        if q x + Finset.univ.sum (fun i : Fin n => a i * x i) = 0 then
-                          (1 : ℤ)
-                        else
-                          (-1 : ℤ)))
+                    simp
         rw [hsum1, neg_eq_zero]
     have hcard_aff :
         Fintype.card {b : alpha × ZMod 2 // S b = 0} =
@@ -6851,7 +6837,7 @@ theorem upper_triangular_reflected_rank_fiber_pred_iff_halfrank
         2 * (r : ℕ) := by
   constructor
   · intro h
-    simpa [hrank Q, h]
+    simp [hrank Q, h]
   · intro h
     apply Fin.ext
     have htwo : 2 * (halfRank Q : ℕ) = 2 * (r : ℕ) := by
@@ -7153,8 +7139,8 @@ theorem matrix_tolin_kernel_subtype_card_eq_two_pow_finrank
       2 ^ Module.finrank (ZMod 2) (LinearMap.ker (A.toLin')) := by
   classical
     let e : {z : Fin n → ZMod 2 // A.toLin' z = 0} ≃ LinearMap.ker (A.toLin') :=
-      { toFun := fun z => ⟨z.1, by simpa using z.2⟩
-        invFun := fun z => ⟨z.1, by simpa using z.2⟩
+      { toFun := fun z => ⟨z.1, z.2⟩
+        invFun := fun z => ⟨z.1, z.2⟩
         left_inv := by
           intro z
           ext
@@ -7294,14 +7280,14 @@ theorem borderMatrix_kernel_card_eq_borderBlock_kernel_card
       have hlast : i = Fin.last n := by
         ext
         exact hval
-      simp [glue, split, hi, hlast]
+      simp [glue, split, hlast]
   have h_split_glue : ∀ wt : (Fin n → ZMod 2) × ZMod 2, split (glue wt) = wt := by
     intro wt
     cases wt with
     | mk w t =>
         apply Prod.ext
         · funext i
-          simp [split, glue, Fin.ext_iff]
+          simp [split, glue]
         · simp [split, glue]
   have hRow : ∀ (wt : (Fin n → ZMod 2) × ZMod 2) (i : Fin n), (A.toLin' (glue wt)) (Fin.castSucc i) = (B.toLin' wt.1 + wt.2 • v) i := by
     rintro ⟨w, t⟩ i
@@ -7343,7 +7329,7 @@ theorem borderMatrix_kernel_card_eq_borderBlock_kernel_card
           ⟨split z.1,
             by
               have hz : A.toLin' (glue (split z.1)) = 0 := by
-                simpa [h_glue_split z.1] using z.2
+                simp [h_glue_split z.1, z.2]
               exact (hPred (split z.1)).1 hz⟩
         invFun := fun wt =>
           ⟨glue wt.1,
@@ -7779,21 +7765,11 @@ theorem borderMatrix_toLinRank_eq_of_range_membership
       simpa [A, LinearMap.mem_ker] using hcard_sub
     have hker : Module.finrank (ZMod 2) (LinearMap.ker (A.toLin')) = Module.finrank (ZMod 2) (LinearMap.ker (B.toLin')) + 1 := by
       have hcardA : Fintype.card (LinearMap.ker (A.toLin')) = 2 ^ Module.finrank (ZMod 2) (LinearMap.ker (A.toLin')) := by
-        first
-          | simpa using (Module.card_fintype (K := ZMod 2) (V := LinearMap.ker (A.toLin')))
-          | simpa using (Module.card_fintype (K := ZMod 2) (M := LinearMap.ker (A.toLin')))
-          | simpa using (Module.card_fintype (R := ZMod 2) (M := LinearMap.ker (A.toLin')))
-          | simpa using (Module.card_fintype (ZMod 2) (LinearMap.ker (A.toLin')))
-          | simpa using (Module.card_eq_pow_finrank (K := ZMod 2) (V := LinearMap.ker (A.toLin')))
-          | simpa using (FiniteDimensional.card_eq_pow_finrank (K := ZMod 2) (V := LinearMap.ker (A.toLin')))
+        simpa using
+          (Module.card_eq_pow_finrank (K := ZMod 2) (V := LinearMap.ker (A.toLin')))
       have hcardB : Fintype.card (LinearMap.ker (B.toLin')) = 2 ^ Module.finrank (ZMod 2) (LinearMap.ker (B.toLin')) := by
-        first
-          | simpa using (Module.card_fintype (K := ZMod 2) (V := LinearMap.ker (B.toLin')))
-          | simpa using (Module.card_fintype (K := ZMod 2) (M := LinearMap.ker (B.toLin')))
-          | simpa using (Module.card_fintype (R := ZMod 2) (M := LinearMap.ker (B.toLin')))
-          | simpa using (Module.card_fintype (ZMod 2) (LinearMap.ker (B.toLin')))
-          | simpa using (Module.card_eq_pow_finrank (K := ZMod 2) (V := LinearMap.ker (B.toLin')))
-          | simpa using (FiniteDimensional.card_eq_pow_finrank (K := ZMod 2) (V := LinearMap.ker (B.toLin')))
+        simpa using
+          (Module.card_eq_pow_finrank (K := ZMod 2) (V := LinearMap.ker (B.toLin')))
       have hpow : 2 ^ Module.finrank (ZMod 2) (LinearMap.ker (A.toLin')) = 2 ^ (Module.finrank (ZMod 2) (LinearMap.ker (B.toLin')) + 1) := by
         rw [← hcardA, hcard, hcardB]
         rw [pow_succ]
@@ -8176,14 +8152,14 @@ theorem alternatingMatrix_oddRank_stratum_card_zero_succ_of_base_q2
         simp [projPair, borderMatrix, hi, hj, hicut, hjcut]
       · have hicut := hcast (i := i) hi
         have hjlast := hlast (i := j) hj
-        simp [projPair, borderMatrix, hi, hj, hicut, hjlast]
+        simp [projPair, borderMatrix, hi, hicut, hjlast]
     · by_cases hj : (j : ℕ) < n
       · have hilast := hlast (i := i) hi
         have hjcut := hcast (i := j) hj
-        simp [projPair, borderMatrix, hi, hj, hilast, hjcut, A.2.2.1 j (Fin.last n)]
+        simp [projPair, borderMatrix, hj, hilast, hjcut, A.2.2.1 j (Fin.last n)]
       · have hilast := hlast (i := i) hi
         have hjlast := hlast (i := j) hj
-        simp [projPair, borderMatrix, hi, hj, hilast, hjlast, A.2.1 (Fin.last n)]
+        simp [projPair, borderMatrix, hilast, hjlast, A.2.1 (Fin.last n)]
   let toPair : succStratum → pairStratum := fun A =>
     ⟨projPair A, by
       have hA : borderMatrix (projPair A) = A.1 := h_proj_ext A
@@ -8221,29 +8197,9 @@ theorem alternatingMatrix_oddRank_stratum_card_zero_succ_of_base_q2
     apply Prod.ext
     · apply Subtype.ext
       ext i j
-      have hi : ((Fin.castSucc i : Fin (n + 1)) : ℕ) < n := by
-        simpa using i.2
-      have hj : ((Fin.castSucc j : Fin (n + 1)) : ℕ) < n := by
-        simpa using j.2
-      have hci :
-          (⟨((Fin.castSucc i : Fin (n + 1)) : ℕ), hi⟩ : Fin n) = i := by
-        apply Fin.ext
-        simp
-      have hcj :
-          (⟨((Fin.castSucc j : Fin (n + 1)) : ℕ), hj⟩ : Fin n) = j := by
-        apply Fin.ext
-        simp
-      simp [projPair, ofPair, borderMatrix, hi, hj, hci, hcj]
+      simp [projPair, ofPair, borderMatrix]
     · funext i
-      have hi : ((Fin.castSucc i : Fin (n + 1)) : ℕ) < n := by
-        simpa using i.2
-      have hlast_not : ¬ ((Fin.last n : Fin (n + 1)) : ℕ) < n := by
-        simp
-      have hci :
-          (⟨((Fin.castSucc i : Fin (n + 1)) : ℕ), hi⟩ : Fin n) = i := by
-        apply Fin.ext
-        simp
-      simp [projPair, ofPair, borderMatrix, hi, hlast_not, hci]
+      simp [projPair, ofPair, borderMatrix]
   let e : succStratum ≃ pairStratum :=
     { toFun := toPair
       invFun := ofPair
@@ -8266,15 +8222,10 @@ theorem alternatingMatrix_oddRank_stratum_card_zero_succ_all_of_base_q2
         (∀ i : Fin (n + 1), A i i = 0) ∧
         (∀ i j : Fin (n + 1), A i j = A j i) ∧
         Module.finrank (ZMod 2) (LinearMap.range (A.toLin')) = 2 * r + 1} = 0 := by
-  try intro r
-  first
-  | exact alternatingMatrix_oddRank_stratum_card_zero_succ_of_base_q2 n r (hbase r)
-  | exact alternatingMatrix_oddRank_stratum_card_zero_succ_of_base_q2 n r (hbase r) (by
-      intro s
-      intro hs
-      exact hbase s)
-  | exact alternatingMatrix_oddRank_stratum_card_zero_succ_of_base_q2 n r (hbase r) (by
-      exact hbase (r - 1))
+  intro r
+  exact alternatingMatrix_oddRank_stratum_card_zero_succ_of_base_q2 n r (hbase r) (by
+    intro s _
+    exact hbase s)
 
 
 
@@ -8969,7 +8920,7 @@ theorem den_mul_div_cancel_q2
               exact Nat.one_lt_pow (by omega : 2 * (s + 1) ≠ 0) (by norm_num : (1 : ℕ) < 2)
             omega
           exact Nat.mul_pos ih hfac
-    simpa [Nat.mul_comm] using Nat.mul_div_right q hden_pos
+    simp [Nat.mul_comm]
 
 
 theorem alternatingMatrix_rankClosed_quotient_recurrence_from_components_q2
@@ -9097,7 +9048,7 @@ theorem borderMatrix_rankFiber_card_of_base_tolinRank
     have hcardNotR : Fintype.card {v : Fin n → ZMod 2 // v ∉ R} = 2 ^ n - 2 ^ k := by
       calc
         Fintype.card {v : Fin n → ZMod 2 // v ∉ R} = Fintype.card (Fin n → ZMod 2) - Fintype.card {v : Fin n → ZMod 2 // v ∈ R} := by
-          simpa using (Fintype.card_subtype_compl (fun v : Fin n → ZMod 2 => v ∈ R))
+          simp
         _ = 2 ^ n - 2 ^ k := by
           rw [htotal, hcardR]
     calc
@@ -9136,7 +9087,7 @@ theorem card_subtype_prod_eq_sum_fiber
           = Fintype.card (Sigma (fun a : α => {b : β // P a b})) :=
         Fintype.card_congr e
       _ = (Finset.univ : Finset α).sum (fun a => Fintype.card {b : β // P a b}) := by
-        simpa using (Fintype.card_sigma (α := α) (β := fun a : α => {b : β // P a b}))
+        simp
 
 
 theorem alternatingMatrix_baseRank_borderRankFiber_sigma_card
@@ -9500,7 +9451,7 @@ theorem succ_rank_stratum_card_transport_of_equiv
         right_inv := by
           intro p
           apply Subtype.ext
-          simpa using e.apply_symm_apply p.val }
+          simp }
 
 
 theorem alternatingMatrix_toLinRank_stratum_card_recurrence_succ_q2
@@ -9591,7 +9542,7 @@ theorem alternatingMatrix_toLinRank_stratum_card_recurrence_succ_q2
             apply le_antisymm
             · exact Nat.le_of_lt_succ j.2
             · exact le_of_not_gt hj
-          simp [toBorder, ofBorder, borderMatrix, hi, hj, hicut, hjlast]
+          simp [toBorder, ofBorder, borderMatrix, hi, hicut, hjlast]
       · have hilast : i = Fin.last n := by
           apply Fin.ext
           apply le_antisymm
@@ -9602,14 +9553,14 @@ theorem alternatingMatrix_toLinRank_stratum_card_recurrence_succ_q2
               (Fin.castSucc (⟨(j : ℕ), hj⟩ : Fin n) : Fin (n + 1)) = j := by
             apply Fin.ext
             rfl
-          simp [toBorder, ofBorder, borderMatrix, hi, hj, hilast, hjcut,
+          simp [toBorder, ofBorder, borderMatrix, hj, hilast, hjcut,
             A.2.2 j (Fin.last n)]
         · have hjlast : j = Fin.last n := by
             apply Fin.ext
             apply le_antisymm
             · exact Nat.le_of_lt_succ j.2
             · exact le_of_not_gt hj
-          simp [toBorder, ofBorder, borderMatrix, hi, hj, hilast, hjlast,
+          simp [toBorder, ofBorder, borderMatrix, hilast, hjlast,
             A.2.1 (Fin.last n)]
     have hright : Function.RightInverse ofBorder toBorder := by
       intro p
@@ -9618,23 +9569,9 @@ theorem alternatingMatrix_toLinRank_stratum_card_recurrence_succ_q2
         apply Prod.ext
         · apply Subtype.ext
           funext i j
-          have hi : ((Fin.castSucc i : Fin (n + 1)) : ℕ) < n := i.2
-          have hj : ((Fin.castSucc j : Fin (n + 1)) : ℕ) < n := j.2
-          have hicut : (⟨((Fin.castSucc i : Fin (n + 1)) : ℕ), hi⟩ : Fin n) = i := by
-            apply Fin.ext
-            rfl
-          have hjcut : (⟨((Fin.castSucc j : Fin (n + 1)) : ℕ), hj⟩ : Fin n) = j := by
-            apply Fin.ext
-            rfl
-          simp [toBorder, ofBorder, borderMatrix, hi, hj, hicut, hjcut]
+          simp [toBorder, ofBorder, borderMatrix]
         · funext i
-          have hi : ((Fin.castSucc i : Fin (n + 1)) : ℕ) < n := i.2
-          have hlast : ¬ ((Fin.last n : Fin (n + 1)) : ℕ) < n := by
-            simpa using (Nat.lt_irrefl n)
-          have hicut : (⟨((Fin.castSucc i : Fin (n + 1)) : ℕ), hi⟩ : Fin n) = i := by
-            apply Fin.ext
-            rfl
-          simp [toBorder, ofBorder, borderMatrix, hi, hlast, hicut]
+          simp [toBorder, ofBorder, borderMatrix]
     let e : succBase ≃ base × (Fin n → ZMod 2) :=
       { toFun := toBorder
         invFun := ofBorder
@@ -9713,9 +9650,8 @@ theorem alternating_matrix_rank_zero_stratum_card_q2
       have hpos :
           0 < Module.finrank (ZMod 2) (LinearMap.range (A.val.toLin')) := by
         exact Module.finrank_pos
-      have hbad : 0 < 0 := by
-        simpa [hrank] using hpos
-      exact Nat.lt_irrefl 0 hbad
+      rw [hrank] at hpos
+      exact Nat.lt_irrefl 0 hpos
     have hzero :
         A.val.toLin' (Pi.single j (1 : ZMod 2)) = 0 := by
       simpa using congrArg Subtype.val hsubzero
@@ -10213,8 +10149,7 @@ theorem upper_triangular_quadratic_coeff_to_alt_matrix_bijective_q2
         · have hji : ¬ (j : ℕ) < (i : ℕ) := fun h => Nat.lt_asymm hij h
           simp [hij, hji]
         · by_cases hji : (j : ℕ) < (i : ℕ)
-          · have hij' : ¬ (i : ℕ) < (j : ℕ) := hij
-            simp [hij, hji, hij']
+          · simp [hij, hji]
           · simp [hij, hji]
     use htoMatrix
     constructor
@@ -10299,7 +10234,7 @@ theorem upper_triangular_nonzero_balanced_affine_param_card_closed_q2
     (let Quad :=
       (i : Fin n) → {j : Fin n // (i : ℕ) < (j : ℕ)} → ZMod 2;
      let AffineParam := (Fin n → ZMod 2) × ZMod 2;
-     let toMatrix : Quad → Matrix (Fin n) (Fin n) (ZMod 2) := fun Q =>
+     let _toMatrix : Quad → Matrix (Fin n) (Fin n) (ZMod 2) := fun Q =>
       (fun i j : Fin n =>
         if h : (i : ℕ) < (j : ℕ) then
           Q i ⟨j, h⟩

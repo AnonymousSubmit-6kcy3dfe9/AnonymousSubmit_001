@@ -28,6 +28,16 @@ FORBIDDEN_WORD = re.compile(r"\b(?:sorry|sorryAx|admit|axiom|unsafe|opaque|parti
 CONSTANT_DECLARATION = re.compile(
     r"(?m)^\s*(?:(?:private|protected|noncomputable|local)\s+)*constant\b"
 )
+FORBIDDEN_OPTION_SETTINGS = (
+    (
+        re.compile(r"\bset_option\s+checkBinderAnnotations\s+false\b"),
+        "set_option checkBinderAnnotations false",
+    ),
+    (
+        re.compile(r"\bset_option\s+warningAsError\s+false\b"),
+        "set_option warningAsError false",
+    ),
+)
 AXIOM_REPORT = re.compile(r"'([^']+)' depends on axioms:\s*\[(.*?)\]", re.DOTALL)
 
 
@@ -105,6 +115,21 @@ def source_location(source: str, offset: int) -> int:
     return source.count("\n", 0, offset) + 1
 
 
+def self_check_source_audit() -> None:
+    for pattern, directive in FORBIDDEN_OPTION_SETTINGS:
+        live_directive = "\n\t".join(directive.split())
+        inert_directives = (
+            f"-- {directive}\n",
+            f"/- outer /- {directive} -/ comment -/",
+            f'"{directive}"',
+        )
+        if not pattern.search(strip_comments_and_strings(live_directive)) or any(
+            pattern.search(strip_comments_and_strings(source))
+            for source in inert_directives
+        ):
+            raise RuntimeError(f"source audit self-check failed for {directive!r}")
+
+
 def audit_sources() -> None:
     failures = []
     files = sorted(
@@ -123,10 +148,16 @@ def audit_sources() -> None:
                     f"{path.relative_to(ROOT)}:{source_location(code, match.start())}: "
                     f"forbidden token {match.group(0).strip()!r}"
                 )
+        for pattern, directive in FORBIDDEN_OPTION_SETTINGS:
+            for match in pattern.finditer(code):
+                failures.append(
+                    f"{path.relative_to(ROOT)}:{source_location(code, match.start())}: "
+                    f"forbidden option setting {directive!r}"
+                )
 
     if failures:
         raise RuntimeError("forbidden Lean source constructs:\n" + "\n".join(failures))
-    print(f"source audit PASS: {len(files)} Lean files, no admissions or user axioms")
+    print(f"source audit PASS: {len(files)} Lean files, no forbidden constructs")
 
 
 def parse_axioms(output: str) -> dict[str, set[str]]:
@@ -191,6 +222,7 @@ def audit_axioms() -> None:
 
 
 def main() -> None:
+    self_check_source_audit()
     audit_sources()
     audit_axioms()
 

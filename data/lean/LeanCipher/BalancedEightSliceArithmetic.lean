@@ -157,9 +157,7 @@ private theorem overlap_indicator_sum
         rcases zmod2_eq_zero_or_one (g (x + t)) with hy | hy <;>
         simp [hx, hy]
     _ = (supportOverlap g t : ZMod 2) := by
-      simpa [supportOverlap] using
-        Finset.sum_boole (R := ZMod 2)
-          (fun x : Vec => g x ≠ 0 ∧ g (x + t) ≠ 0) Finset.univ
+      simp [supportOverlap, Finset.sum_boole]
 
 private theorem overlap_sum_eq_zero_of_ne_zero
     (g : Vec -> ZMod 2) {t : Vec} (ht : t ≠ 0) :
@@ -233,9 +231,7 @@ theorem autocorrelation_support_formula (g : Vec -> ZMod 2) (t : Vec) :
             by_cases hx : g x = 0 <;> by_cases hy : g (x + t) = 0 <;>
               simp [hx, hy]
       _ = (supportOverlap g t : Int) := by
-            simpa [supportOverlap] using
-              Finset.sum_boole (R := Int)
-                (fun x : Vec => g x ≠ 0 ∧ g (x + t) ≠ 0) Finset.univ
+            simp [supportOverlap, Finset.sum_boole]
   have hweightIndicator :
       (∑ x : Vec, if g x ≠ 0 then (1 : Int) else 0) =
         (weight g : Int) := by

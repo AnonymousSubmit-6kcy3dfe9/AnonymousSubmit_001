@@ -154,11 +154,7 @@ theorem localCellCount_cast_eq_sum_indicator
       ∑ a : Vec,
         if oddMagnitude f (a + ell) = odd ∧ evenMagnitude f a = even
         then (1 : Int) else 0 := by
-  simpa [localCellCount] using
-    (Finset.sum_boole (R := Int)
-      (fun a : Vec =>
-        oddMagnitude f (a + ell) = odd ∧ evenMagnitude f a = even)
-      Finset.univ).symm
+  simp [localCellCount, Finset.sum_boole]
 
 theorem weightedLocalTable_eq_sum
     (f : V 8 -> ZMod 2) (hf : weight f = 128)

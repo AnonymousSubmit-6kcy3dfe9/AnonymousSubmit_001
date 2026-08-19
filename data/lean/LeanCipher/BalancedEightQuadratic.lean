@@ -58,7 +58,7 @@ theorem rm2_walsh_eq_phaseWalsh (R : RM2 n) (a : V n) :
   apply Finset.sum_congr rfl
   intro x _
   congr 1
-  simp only [rm2Eval, phaseWalsh, walsh, quadraticEval, f2Dot,
+  simp only [rm2Eval, quadraticEval, f2Dot,
     Pi.add_apply, add_mul, Finset.sum_add_distrib]
   ac_rfl
 
@@ -238,10 +238,7 @@ theorem amplitude_mul_certificateSign
   rcases Int.natAbs_eq_iff.mp habs with hpos | hneg
   · simp [certificateSign, hpos]
   · have hamp : (0 : Int) < ((2 ^ (7 - s) : Nat) : Int) := by positivity
-    have hneSigns :
-        -((2 ^ (7 - s) : Nat) : Int) ≠ ((2 ^ (7 - s) : Nat) : Int) := by
-      omega
-    simp [certificateSign, hneg, hneSigns]
+    simp [certificateSign, hneg]
 
 def certificateTransform (R : RM2 7) (s : Nat) (a : V 7) : Int :=
   ∑ x ∈ walshSupport R, certificateSign R s x * character a x
@@ -333,7 +330,7 @@ theorem exists_balanced_quadratic_spectrum_certificate
     walshSupport_card R s hrank, ?_, ?_, certificateSign_sum R s hrank, ?_⟩
   · have hzero : walsh (rm2Eval R) (0 : V 7) = 0 := by
       rw [walsh_eq_card_sub_two_mul_weight]
-      simp [hbalanced, f2Vec_card]
+      simp [hbalanced]
     simp [walshSupport, hzero]
   · intro x _
     exact certificateSign_eq_one_or_neg_one R s x
@@ -424,7 +421,7 @@ private theorem support_iff_anchor_add_mem_range
       simpa [phaseWalsh, quadraticEval, f2Dot, sign] using hzPhase)
   have hcancel : (R.linear + a) + (R.linear + z) = a + z := by
     funext i
-    simp [Pi.add_apply, add_assoc, add_left_comm, add_comm,
+    simp [Pi.add_apply, add_left_comm, add_comm,
       CharTwo.add_self_eq_zero]
   rw [hcancel] at h
   simpa [walshSupport, rm2_walsh_eq_phaseWalsh, phaseWalsh,
@@ -455,8 +452,7 @@ theorem support_character_sum_rank_six
       invFun := fun u =>
         ⟨u.1 + z, (support_iff_anchor_add_mem_range R z hz (u.1 + z)).mpr (by
           have hu : u.1 ∈ LinearMap.range (Matrix.toLin' A) := u.2
-          simpa [A, add_assoc, add_left_comm, add_comm,
-            CharTwo.add_self_eq_zero] using hu)⟩
+          simp [A, add_comm, hu])⟩
       left_inv := by
         intro x
         apply Subtype.ext
@@ -476,7 +472,6 @@ theorem support_character_sum_rank_six
       (fun x : {x : V 7 // x ∈ walshSupport R} => character a x.1)
       (fun u : LinearMap.range (Matrix.toLin' A) => character a (u.1 + z))
       (fun x => by
-        congr 1
         simp [e, add_assoc, CharTwo.add_self_eq_zero])
   calc
     (∑ x ∈ walshSupport R, character a x) =

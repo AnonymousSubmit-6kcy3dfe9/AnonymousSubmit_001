@@ -9,7 +9,9 @@ at Lean 4.29.1 and by `lake-manifest.json` at mathlib commit
 
 From a clean checkout, install Elan and run the following from this directory.
 `lake build` consumes the checked lockfile; `lake update` is not part of the
-reproducible replay.
+reproducible replay. The package configuration passes
+`-DwarningAsError=true`, so every ordinary Lake build also enforces a
+warning-free source tree.
 
     lake build CryptoFrontierAtlas
 
@@ -38,9 +40,15 @@ because the Lake package name differs from the aggregate library target.
 
 The first command lexically rejects `sorry`, `sorryAx`, `admit`, user-written
 axioms/constants, `opaque`, `unsafe`, and `partial` declarations in the project
-sources. It then runs `#print axioms` on the complete public theorems and
-checks the output against the trust boundary below. CI also runs Lean's
-independent `leanchecker` environment check.
+sources. It also rejects the option settings
+`set_option checkBinderAnnotations false` and
+`set_option warningAsError false`, including variants separated by arbitrary
+whitespace, while ignoring comments and string literals. These rules keep every
+declaration under Lean's default instance-binder validation and prevent source
+files from locally bypassing the package's warning-as-error policy. The command
+then runs `#print axioms` on the complete public theorems and checks the output
+against the trust boundary below. CI also runs Lean's independent `leanchecker`
+environment check.
 
 ## Nonlinearity semantics
 
@@ -80,7 +88,8 @@ complete Balanced-eight theorem therefore additionally contains generated
 `._native.native_decide.ax_*` declarations and trusts Lean's compiled native
 evaluator. The surrounding reductions and soundness bridges are proved in
 Lean. No project source contains an admission, user-declared axiom, opaque
-replacement, or unsafe declaration.
+replacement, unsafe declaration, disabled binder-annotation validation, or a
+local warning-as-error bypass.
 
 ## Balanced-eight certificate provenance
 

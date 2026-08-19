@@ -47,7 +47,7 @@ theorem supportXor_slices (F : V 8 -> ZMod 2) :
       apply Finset.sum_congr rfl
       intro x _
       rw [show (Finset.univ : Finset (ZMod 2)) = {0, 1} by decide]
-      simp [add_comm]
+      simp
     _ = ∑ x : V 8, F x * x i.castSucc := by
       simpa only [splitEquiv_symm_apply, join, Fin.snoc_castSucc] using hsplit
 
@@ -327,7 +327,7 @@ theorem signed_category_identity_59
     (normalized_odd_frequency_magnitude f hf hnorm hall (a + ell))
   rcases normalized_odd_frequency_magnitude f hf hnorm hall (a + ell) with
       ho | ho | ho <;>
-    simp [categoryScore, ho] at hid ⊢ <;> omega
+    simp [categoryScore] at hid ⊢ <;> omega
 
 theorem signed_category_identity_61
     (f : V 8 -> ZMod 2) (hf : weight f = 128)
@@ -356,7 +356,7 @@ theorem signed_category_identity_61
     (normalized_odd_frequency_magnitude f hf hnorm hall (a + ell))
   rcases normalized_odd_frequency_magnitude f hf hnorm hall (a + ell) with
       ho | ho | ho <;>
-    simp [categoryScore, ho] at hid ⊢ <;> omega
+    simp [categoryScore] at hid ⊢ <;> omega
 
 /-! ## Closed inverse-Walsh box inequality -/
 
@@ -498,9 +498,7 @@ theorem magnitudeCount_eq_int_indicator_sum
     (spectrum : Vec -> Nat) (m : Nat) :
     (magnitudeCount spectrum m : Int) =
       ∑ a : Vec, if spectrum a = m then (1 : Int) else 0 := by
-  simpa [magnitudeCount] using
-    (Finset.sum_boole (R := Int)
-      (fun a : Vec => spectrum a = m) Finset.univ).symm
+  simp [magnitudeCount, Finset.sum_boole]
 
 theorem categoryScore_sum
     (f : V 8 -> ZMod 2) (hf : weight f = 128)
